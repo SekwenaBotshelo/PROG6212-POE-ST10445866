@@ -1,31 +1,242 @@
+/* ---------- BASE STYLES ---------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    color: #212529;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 1rem;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* ---------- FOCUS EFFECTS ---------- */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* ---------- DARK MODE ---------- */
+body.dark-mode {
+    background-color: #121212;
+    color: #e4e4e4;
+}
+
+    body.dark-mode a {
+        color: #ffffff;
+    }
+
+        body.dark-mode a:hover {
+            color: #d1aaff;
+        }
+
+/* ---------- NAVBAR ---------- */
+.navbar {
+    transition: background-color 0.3s ease;
+}
+
+body:not(.dark-mode) .navbar {
+    background-color: #f8f9fa !important;
+}
+
+body.dark-mode .navbar {
+    background-color: #1f1f1f !important;
+}
+
+.navbar-nav .nav-link {
+    transition: all 0.3s ease;
+    color: #212529;
+}
+
+body.dark-mode .navbar-nav .nav-link {
+    color: #ffffff;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(37, 140, 251, 0.1);
+    border-radius: 5px;
+}
+
+.navbar-nav .active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* ---------- CARDS ---------- */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 10px;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+body.dark-mode .card {
+    background-color: #1f1f1f;
+    color: #e4e4e4;
+    border-color: #333;
+}
+
+/* ---------- TABLES ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.03);
+}
+
+table tbody tr:hover {
+    background-color: rgba(37, 140, 251, 0.1);
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+    transition: all 0.2s ease, transform 0.1s ease-in-out;
+    border-radius: 6px;
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn:active {
+        transform: translateY(0px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+body.dark-mode .btn {
+    background-color: #333;
+    color: #fff;
+}
+
+/* ---------- FORM CONTROLS ---------- */
+body.dark-mode .form-control {
+    background-color: #2c2c2c;
+    color: #e4e4e4;
+    border-color: #444;
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+body.dark-mode .form-floating > .form-control-plaintext::placeholder,
+body.dark-mode .form-floating > .form-control::placeholder {
+    color: #ffffff; /* placeholder in dark mode */
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* ---------- WATERMARK ---------- */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/prog6212 - Stock Image.jpeg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: 0.05;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ---------- CONTAINER SPACING ---------- */
+.container, header, footer {
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    flex-grow: 1;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin-top: auto;
+}
+
+body.dark-mode footer {
+    background-color: #1f1f1f;
+    color: #bbbbbb;
+}
+
+/* ---------- TOOLTIP ---------- */
+.tooltip-inner {
+    background-color: #258cfb !important;
+    color: #fff !important;
+}
+
+.tooltip.bs-tooltip-top .arrow::before {
+    border-top-color: #258cfb !important;
+}
+
+/* ---------- SEARCH & TOGGLE BUTTON ---------- */
+#dashboardSearch,
+#searchBtn,
+#themeToggle {
+    transition: all 0.3s ease;
+}
+
+body.dark-mode #dashboardSearch,
+body.dark-mode #searchBtn,
+body.dark-mode #themeToggle {
+    color: #ffffff;
+    border-color: #444;
+    background-color: #2c2c2c;
+}
+
+    /* Placeholder visibility in dark mode */
+    body.dark-mode #dashboardSearch::placeholder {
+        color: #ffffff;
+        opacity: 1;
+    }
+
+/* ---------- TYPOGRAPHY ---------- */
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    color: #6c757d !important;
 }
