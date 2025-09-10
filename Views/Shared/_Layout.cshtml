@@ -3,48 +3,102 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PROG6212_POE</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Contract Monthly Claim System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PROG6212_POE.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PROG6212_POE</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    Contract Monthly Claim System
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Lecturer" asp-action="Dashboard">Lecturer</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Coordinator" asp-action="Dashboard">Coordinator</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Manager" asp-action="Dashboard">Manager</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
                     </ul>
+
+                    <form id="dashboardSearchForm" class="d-flex me-2" method="get">
+                        <input id="dashboardSearch" class="form-control me-1" type="search" placeholder="Search Dashboard..." aria-label="Search" name="dashboard" />
+                        <button id="searchBtn" class="btn btn-outline-primary" type="submit">Go</button>
+                    </form>
+
+                    <button id="themeToggle" class="btn btn-outline-secondary ms-2">🌙</button>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="container d-flex flex-column min-vh-100">
+        <main role="main" class="flex-grow-1 pb-3">
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - PROG6212_POE - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; @DateTime.Now.Year - Contract Monthly Claim System - ST10445866 - Botshelo Koketso Sekwena
+            | <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        const themeToggle = document.getElementById("themeToggle");
+        const body = document.body;
+
+        // Load saved theme on page load
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            body.classList.add("dark-mode");
+            themeToggle.textContent = "☀️";
+        } else {
+            themeToggle.textContent = "🌙";
+        }
+
+        // Toggle dark/light mode
+        themeToggle.addEventListener("click", () => {
+            body.classList.toggle("dark-mode");
+            if (body.classList.contains("dark-mode")) {
+                localStorage.setItem("theme", "dark");
+                themeToggle.textContent = "☀️";
+            } else {
+                localStorage.setItem("theme", "light");
+                themeToggle.textContent = "🌙";
+            }
+        });
+
+        // Dashboard search handling
+        const dashboardSearchForm = document.getElementById("dashboardSearchForm");
+        dashboardSearchForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const query = document.getElementById("dashboardSearch").value.trim().toLowerCase();
+            if (!query) return; // do nothing if empty
+
+            if (query.includes("lecturer")) {
+                window.location.href = '/Lecturer/Dashboard';
+            } else if (query.includes("coordinator") || query.includes("programme coordinator")) {
+                window.location.href = '/Coordinator/Dashboard';
+            } else if (query.includes("manager") || query.includes("academic manager")) {
+                window.location.href = '/Manager/Dashboard';
+            } else {
+                window.location.href = '/Home/Index'; // fallback
+            }
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
