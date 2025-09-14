@@ -1,7 +1,9 @@
 # PROG6212-POE
 
 Student Name: Botshelo Koketso Sekwena
+
 Student Number: ST10445866
+
 GitHub Repository: https://github.com/SekwenaBotshelo/PROG6212-POE-ST10445866.git
 
 Project Description
