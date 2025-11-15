@@ -1,23 +1,150 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PROG6212_POE.Models;
+using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
     public class CoordinatorController : Controller
     {
+        // Helper method to get current coordinator
+        private User GetCurrentCoordinator()
+        {
+            var userId = HttpContext.Session.GetString("UserId");
+            var users = AccountController.GetUsers();
+            return users.FirstOrDefault(u => u.UserId.ToString() == userId && u.Role == "Coordinator");
+        }
+
+        // Helper method to get user by ID
+        private User GetUserById(int userId)
+        {
+            var users = AccountController.GetUsers();
+            return users.FirstOrDefault(u => u.UserId == userId);
+        }
+
+        // GET: /Coordinator/Dashboard
         public IActionResult Dashboard()
         {
-            return View();
+            // Authorization check with sessions
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
+            ViewBag.CurrentUser = coordinator;
+
+            // Get claims pending verification using sessions
+            var claims = HRController.GetClaims();
+            var pendingClaims = claims.Where(c => c.Status == "Pending Verification").ToList();
+            var verifiedClaims = claims.Where(c => c.Status == "Verified" && c.VerifiedByCoordinatorId == coordinator.UserId).ToList();
+
+            ViewBag.PendingCount = pendingClaims.Count;
+            ViewBag.VerifiedCount = verifiedClaims.Count;
+            ViewBag.TotalClaims = claims.Count;
+
+            return View(pendingClaims);
         }
 
+        // GET: /Coordinator/VerifyClaims
         public IActionResult VerifyClaims()
         {
-            return View();
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
+            var claims = HRController.GetClaims();
+            var pendingClaims = claims.Where(c => c.Status == "Pending Verification").ToList();
+
+            ViewBag.CurrentUser = coordinator;
+            return View(pendingClaims);
         }
 
+        // GET: /Coordinator/ViewClaimDetails/{id}
         public IActionResult ViewClaimDetails(int id)
         {
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var claims = HRController.GetClaims();
+            var claim = claims.FirstOrDefault(c => c.ClaimId == id);
+
+            if (claim == null)
+            {
+                TempData["ErrorMessage"] = "Claim not found.";
+                return RedirectToAction("Dashboard");
+            }
+
             ViewBag.ClaimId = id;
-            return View();
+            ViewBag.CurrentUser = GetCurrentCoordinator();
+            return View(claim);
+        }
+
+        // POST: /Coordinator/VerifyClaim
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult VerifyClaim(int claimId)
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
+            var claims = HRController.GetClaims();
+            var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
+
+            if (claim != null)
+            {
+                claim.Status = "Verified";
+                claim.VerifiedByCoordinatorId = coordinator.UserId;
+                claim.VerifiedDate = DateTime.Now;
+
+                HRController.UpdateClaim(claim);
+                TempData["SuccessMessage"] = "Claim verified successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Claim not found.";
+            }
+
+            return RedirectToAction("Dashboard");
+        }
+
+        // POST: /Coordinator/RejectClaim
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RejectClaim(int claimId)
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
+            var claims = HRController.GetClaims();
+            var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
+
+            if (claim != null)
+            {
+                claim.Status = "Rejected";
+                claim.VerifiedByCoordinatorId = coordinator.UserId;
+                claim.VerifiedDate = DateTime.Now;
+
+                HRController.UpdateClaim(claim);
+                TempData["SuccessMessage"] = "Claim rejected successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Claim not found.";
+            }
+
+            return RedirectToAction("Dashboard");
         }
     }
 }

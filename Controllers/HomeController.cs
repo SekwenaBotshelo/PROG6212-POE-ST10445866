@@ -15,6 +15,20 @@ namespace PROG6212_POE.Controllers
 
         public IActionResult Index()
         {
+            // If user is already logged in, redirect to their dashboard
+            if (HttpContext.Session.GetString("UserId") != null)
+            {
+                var userRole = HttpContext.Session.GetString("UserRole");
+                return userRole switch
+                {
+                    "HR" => RedirectToAction("Dashboard", "HR"),
+                    "Lecturer" => RedirectToAction("Dashboard", "Lecturer"),
+                    "Coordinator" => RedirectToAction("Dashboard", "Coordinator"),
+                    "Manager" => RedirectToAction("Dashboard", "Manager"),
+                    _ => View()
+                };
+            }
+
             // Show search error if any
             if (TempData["SearchError"] != null)
             {
@@ -75,6 +89,10 @@ namespace PROG6212_POE.Controllers
             else if (dashboard.Contains("manager"))
             {
                 return RedirectToAction("Dashboard", "Manager");
+            }
+            else if (dashboard.Contains("hr"))
+            {
+                return RedirectToAction("Dashboard", "HR");
             }
 
             // No match found
