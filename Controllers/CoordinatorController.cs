@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
+using PROG6212_POE.Services;
 using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
@@ -10,21 +11,15 @@ namespace PROG6212_POE.Controllers
         private User GetCurrentCoordinator()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var users = AccountController.GetUsers();
-            return users.FirstOrDefault(u => u.UserId.ToString() == userId && u.Role == "Coordinator");
-        }
+            if (string.IsNullOrEmpty(userId)) return null;
 
-        // Helper method to get user by ID
-        private User GetUserById(int userId)
-        {
-            var users = AccountController.GetUsers();
-            return users.FirstOrDefault(u => u.UserId == userId);
+            var users = DataService.GetUsers();
+            return users.FirstOrDefault(u => u.UserId.ToString() == userId && u.Role == "Coordinator");
         }
 
         // GET: /Coordinator/Dashboard
         public IActionResult Dashboard()
         {
-            // Authorization check with sessions
             if (HttpContext.Session.GetString("UserRole") != "Coordinator")
                 return RedirectToAction("AccessDenied", "Account");
 
@@ -34,8 +29,8 @@ namespace PROG6212_POE.Controllers
 
             ViewBag.CurrentUser = coordinator;
 
-            // Get claims pending verification using sessions
-            var claims = HRController.GetClaims();
+            // Get claims pending verification using DataService
+            var claims = DataService.GetClaims();
             var pendingClaims = claims.Where(c => c.Status == "Pending Verification").ToList();
             var verifiedClaims = claims.Where(c => c.Status == "Verified" && c.VerifiedByCoordinatorId == coordinator.UserId).ToList();
 
@@ -56,7 +51,7 @@ namespace PROG6212_POE.Controllers
             if (coordinator == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claims = HRController.GetClaims();
+            var claims = DataService.GetClaims();
             var pendingClaims = claims.Where(c => c.Status == "Pending Verification").ToList();
 
             ViewBag.CurrentUser = coordinator;
@@ -69,7 +64,7 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "Coordinator")
                 return RedirectToAction("AccessDenied", "Account");
 
-            var claims = HRController.GetClaims();
+            var claims = DataService.GetClaims();
             var claim = claims.FirstOrDefault(c => c.ClaimId == id);
 
             if (claim == null)
@@ -95,7 +90,7 @@ namespace PROG6212_POE.Controllers
             if (coordinator == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claims = HRController.GetClaims();
+            var claims = DataService.GetClaims();
             var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
 
             if (claim != null)
@@ -104,7 +99,7 @@ namespace PROG6212_POE.Controllers
                 claim.VerifiedByCoordinatorId = coordinator.UserId;
                 claim.VerifiedDate = DateTime.Now;
 
-                HRController.UpdateClaim(claim);
+                DataService.UpdateClaim(claim);
                 TempData["SuccessMessage"] = "Claim verified successfully!";
             }
             else
@@ -127,7 +122,7 @@ namespace PROG6212_POE.Controllers
             if (coordinator == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claims = HRController.GetClaims();
+            var claims = DataService.GetClaims();
             var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
 
             if (claim != null)
@@ -136,7 +131,7 @@ namespace PROG6212_POE.Controllers
                 claim.VerifiedByCoordinatorId = coordinator.UserId;
                 claim.VerifiedDate = DateTime.Now;
 
-                HRController.UpdateClaim(claim);
+                DataService.UpdateClaim(claim);
                 TempData["SuccessMessage"] = "Claim rejected successfully!";
             }
             else

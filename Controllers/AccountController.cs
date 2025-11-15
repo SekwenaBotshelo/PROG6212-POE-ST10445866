@@ -1,67 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
+using PROG6212_POE.Services;
 using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
     public class AccountController : Controller
     {
-        // Static list to simulate database (replace with DbContext later)
-        private static List<User> _users = new List<User>();
-        private static int _nextUserId = 1;
-
         // Static method to access users from other controllers
         public static List<User> GetUsers()
         {
-            return _users;
-        }
-
-        // Initialize with some default users for testing
-        static AccountController()
-        {
-            _users.Add(new User
-            {
-                UserId = _nextUserId++,
-                Name = "HR",
-                Surname = "Manager",
-                Email = "hr@university.com",
-                HourlyRate = 0,
-                Role = "HR",
-                Password = "password123"
-            });
-
-            _users.Add(new User
-            {
-                UserId = _nextUserId++,
-                Name = "John",
-                Surname = "Lecturer",
-                Email = "lecturer@university.com",
-                HourlyRate = 350,
-                Role = "Lecturer",
-                Password = "password123"
-            });
-
-            _users.Add(new User
-            {
-                UserId = _nextUserId++,
-                Name = "Sarah",
-                Surname = "Coordinator",
-                Email = "coordinator@university.com",
-                HourlyRate = 0,
-                Role = "Coordinator",
-                Password = "password123"
-            });
-
-            _users.Add(new User
-            {
-                UserId = _nextUserId++,
-                Name = "Michael",
-                Surname = "Manager",
-                Email = "manager@university.com",
-                HourlyRate = 0,
-                Role = "Manager",
-                Password = "password123"
-            });
+            return DataService.GetUsers();
         }
 
         // GET: /Account/Login
@@ -88,7 +37,8 @@ namespace PROG6212_POE.Controllers
                     return View();
                 }
 
-                var user = _users.FirstOrDefault(u => u.Email == email && u.Password == password);
+                var users = DataService.GetUsers();
+                var user = users.FirstOrDefault(u => u.Email == email && u.Password == password);
 
                 if (user != null)
                 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
+using PROG6212_POE.Services;
 using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
@@ -10,21 +11,15 @@ namespace PROG6212_POE.Controllers
         private User GetCurrentLecturer()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var users = AccountController.GetUsers();
-            return users.FirstOrDefault(u => u.UserId.ToString() == userId && u.Role == "Lecturer");
-        }
+            if (string.IsNullOrEmpty(userId)) return null;
 
-        // Helper method to get user by ID
-        private User GetUserById(int userId)
-        {
-            var users = AccountController.GetUsers();
-            return users.FirstOrDefault(u => u.UserId == userId);
+            var users = DataService.GetUsers();
+            return users.FirstOrDefault(u => u.UserId.ToString() == userId && u.Role == "Lecturer");
         }
 
         // GET: /Lecturer/Dashboard
         public IActionResult Dashboard()
         {
-            // Authorization check
             if (HttpContext.Session.GetString("UserRole") != "Lecturer")
                 return RedirectToAction("AccessDenied", "Account");
 
@@ -35,8 +30,7 @@ namespace PROG6212_POE.Controllers
             ViewBag.CurrentUser = lecturer;
 
             // Get only this lecturer's claims
-            var claims = HRController.GetClaims();
-            var lecturerClaims = claims.Where(c => c.LecturerId == lecturer.UserId).ToList();
+            var lecturerClaims = DataService.GetClaimsByLecturer(lecturer.UserId);
             return View(lecturerClaims);
         }
 
@@ -60,7 +54,7 @@ namespace PROG6212_POE.Controllers
             return View(claim);
         }
 
-        // POST: /Lecturer/SubmitClaim
+        // POST: /Lecturer/SubmitClaim - SIMPLIFIED WORKING VERSION
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SubmitClaim(Claim claim, IFormFile supportingDocument)
@@ -76,42 +70,64 @@ namespace PROG6212_POE.Controllers
             claim.LecturerId = lecturer.UserId;
             claim.Lecturer = lecturer;
             claim.SubmittedDate = DateTime.Now;
+            claim.Status = "Pending Verification";
 
-            // Validation: Max 180 hours
-            if (claim.TotalHours > 180)
+            // CRITICAL: Clear Notes validation if empty and ensure it's not null
+            if (string.IsNullOrEmpty(claim.Notes))
             {
-                ModelState.AddModelError("TotalHours", "Maximum 180 hours per month allowed.");
+                ModelState.Remove("Notes");
+                claim.Notes = string.Empty;
+            }
+
+            // Manual validation for hours
+            if (claim.TotalHours <= 0 || claim.TotalHours > 180)
+            {
+                ModelState.AddModelError("TotalHours", "Hours must be between 1 and 180.");
+            }
+
+            // Manual validation for month
+            if (string.IsNullOrEmpty(claim.Month))
+            {
+                ModelState.AddModelError("Month", "Month is required.");
             }
 
             if (ModelState.IsValid)
             {
-                var claims = HRController.GetClaims();
-                claim.ClaimId = claims.Count > 0 ? claims.Max(c => c.ClaimId) + 1 : 101;
-
-                // Handle file upload
-                if (supportingDocument != null && supportingDocument.Length > 0)
+                try
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                    if (!Directory.Exists(uploadsFolder))
-                        Directory.CreateDirectory(uploadsFolder);
-
-                    var fileName = $"{claim.ClaimId}_{supportingDocument.FileName}";
-                    var filePath = Path.Combine(uploadsFolder, fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    // Handle file upload
+                    if (supportingDocument != null && supportingDocument.Length > 0)
                     {
-                        supportingDocument.CopyTo(stream);
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
+                        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_{supportingDocument.FileName}";
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            supportingDocument.CopyTo(stream);
+                        }
+
+                        claim.DocumentPath = fileName;
+                        claim.DocumentOriginalName = supportingDocument.FileName;
                     }
 
-                    claim.DocumentPath = fileName;
-                    claim.DocumentOriginalName = supportingDocument.FileName;
-                }
+                    // Add the claim to storage
+                    DataService.AddClaim(claim);
 
-                HRController.AddClaim(claim);
-                TempData["SuccessMessage"] = "Claim submitted successfully! It is now pending verification.";
-                return RedirectToAction("Dashboard");
+                    TempData["SuccessMessage"] = $"Claim #{claim.ClaimId} submitted successfully! It is now pending verification.";
+                    return RedirectToAction("Dashboard");
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                }
             }
 
+            // If we get here, there were validation errors
+            claim.Lecturer = lecturer;
             ViewBag.CurrentUser = lecturer;
             return View(claim);
         }
@@ -126,8 +142,7 @@ namespace PROG6212_POE.Controllers
             if (lecturer == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claims = HRController.GetClaims();
-            var lecturerClaims = claims.Where(c => c.LecturerId == lecturer.UserId).ToList();
+            var lecturerClaims = DataService.GetClaimsByLecturer(lecturer.UserId);
             ViewBag.CurrentUser = lecturer;
             return View(lecturerClaims);
         }

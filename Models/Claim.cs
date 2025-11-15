@@ -20,6 +20,7 @@ namespace PROG6212_POE.Models
         [Display(Name = "Hours Worked")]
         public double TotalHours { get; set; }
 
+        // NOTES IS OPTIONAL - NO [Required] ATTRIBUTE
         [Display(Name = "Additional Notes")]
         [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters")]
         public string Notes { get; set; } = string.Empty;
@@ -31,10 +32,10 @@ namespace PROG6212_POE.Models
         // Status workflow: Pending Verification → Verified → Approved → Paid
         public string Status { get; set; } = "Pending Verification";
 
-        // Auto-calculated property using lecturer's hourly rate
+        // Auto-calculated property with null checking
         [Display(Name = "Total Amount")]
         [DataType(DataType.Currency)]
-        public double TotalAmount => TotalHours * (double)Lecturer.HourlyRate;
+        public double TotalAmount => TotalHours * (double)(Lecturer?.HourlyRate ?? 0);
 
         // Approval tracking
         [Display(Name = "Verified By")]
@@ -68,5 +69,12 @@ namespace PROG6212_POE.Models
 
         [Display(Name = "Document Original Name")]
         public string? DocumentOriginalName { get; set; }
+
+        // COMPUTED PROPERTIES FOR BACKWARD COMPATIBILITY
+        [NotMapped]
+        public string LecturerName => Lecturer?.FullName ?? "Unknown Lecturer";
+
+        [NotMapped]
+        public decimal HourlyRate => Lecturer?.HourlyRate ?? 0;
     }
 }

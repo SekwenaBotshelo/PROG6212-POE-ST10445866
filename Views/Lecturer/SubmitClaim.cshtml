@@ -18,6 +18,15 @@
         </div>
     }
 
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <!-- Validation Summary -->
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
     <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
         @Html.AntiForgeryToken()
 
@@ -26,16 +35,19 @@
 
         <div class="form-group mb-3">
             <label asp-for="Month" class="form-label">Claim Month *</label>
-            <input asp-for="Month" type="month" class="form-control" required />
+            <input asp-for="Month" type="month" class="form-control" required
+                   min="2024-01" max="2026-12" />
             <span asp-validation-for="Month" class="text-danger"></span>
+            <small class="form-text text-muted">Select the month you're claiming for</small>
         </div>
 
         <div class="form-group mb-3">
             <label asp-for="TotalHours" class="form-label">Hours Worked *</label>
             <input asp-for="TotalHours" class="form-control" id="hoursWorked"
-                   min="1" max="180" step="0.5" required />
+                   min="1" max="180" step="0.5" required
+                   placeholder="Enter hours between 1 and 180" />
             <span asp-validation-for="TotalHours" class="text-danger"></span>
-            <small class="form-text text-muted">Maximum 180 hours per month allowed.</small>
+            <small class="form-text text-muted">Maximum 180 hours per month allowed</small>
         </div>
 
         <!-- Auto-calculation display -->
@@ -49,7 +61,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label asp-for="Notes" class="form-label">Additional Notes</label>
+            <label asp-for="Notes" class="form-label">Additional Notes <small class="text-muted">(Optional)</small></label>
             <textarea asp-for="Notes" class="form-control" rows="3"
                       placeholder="Optional: Add any additional information about this claim"></textarea>
             <span asp-validation-for="Notes" class="text-danger"></span>
@@ -65,6 +77,10 @@
         <button type="submit" class="btn btn-success w-100 mt-3">
             <i class="bi bi-check-lg"></i> Submit Claim
         </button>
+
+        <div class="text-center mt-2">
+            <a asp-action="Dashboard" class="btn btn-secondary">Cancel and Return to Dashboard</a>
+        </div>
     </form>
 </div>
 
@@ -78,7 +94,7 @@
             $('#hoursWorked').on('input', function() {
                 var hours = parseFloat($(this).val()) || 0;
                 var total = hours * hourlyRate;
-                $('#totalAmount').val(total.toFixed(2));
+                $('#totalAmount').val('R ' + total.toFixed(2));
 
                 // Validation feedback
                 if (hours > 180) {
@@ -91,6 +107,11 @@
                     $(this).removeClass('is-invalid is-valid');
                 }
             });
+
+            // Trigger calculation on page load if there's a value
+            if ($('#hoursWorked').val()) {
+                $('#hoursWorked').trigger('input');
+            }
         });
     </script>
 }

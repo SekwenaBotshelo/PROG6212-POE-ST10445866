@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
+using PROG6212_POE.Services;
 using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
     public class HRController : Controller
     {
-        private static List<Claim> _claims = new List<Claim>();
-        private static int _nextClaimId = 101;
-
         // Helper method to get current user
         private User GetCurrentUser()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            var users = AccountController.GetUsers();
+            if (string.IsNullOrEmpty(userId)) return null;
+
+            var users = DataService.GetUsers();
             return users.FirstOrDefault(u => u.UserId.ToString() == userId);
         }
 
@@ -25,12 +25,13 @@ namespace PROG6212_POE.Controllers
                 return RedirectToAction("AccessDenied", "Account");
 
             var currentUser = GetCurrentUser();
-            var users = AccountController.GetUsers();
+            var users = DataService.GetUsers();
+            var claims = DataService.GetClaims();
 
             ViewBag.CurrentUser = currentUser;
             ViewBag.UserCount = users.Count;
             ViewBag.LecturerCount = users.Count(u => u.Role == "Lecturer");
-            ViewBag.TotalClaims = _claims.Count;
+            ViewBag.TotalClaims = claims.Count;
 
             return View(users);
         }
@@ -54,7 +55,7 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
-            var users = AccountController.GetUsers();
+            var users = DataService.GetUsers();
 
             if (ModelState.IsValid)
             {
@@ -66,8 +67,8 @@ namespace PROG6212_POE.Controllers
                     return View(user);
                 }
 
-                user.UserId = users.Max(u => u.UserId) + 1;
-                users.Add(user);
+                // Add user through DataService
+                DataService.AddUser(user);
 
                 TempData["SuccessMessage"] = $"{user.DisplayRole} {user.FullName} created successfully!";
                 return RedirectToAction("Dashboard");
@@ -83,8 +84,7 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
-            var users = AccountController.GetUsers();
-            var user = users.FirstOrDefault(u => u.UserId == id);
+            var user = DataService.GetUserById(id);
 
             if (user == null)
             {
@@ -104,7 +104,7 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
-            var users = AccountController.GetUsers();
+            var users = DataService.GetUsers();
 
             if (ModelState.IsValid)
             {
@@ -119,6 +119,7 @@ namespace PROG6212_POE.Controllers
                         return View(updatedUser);
                     }
 
+                    // Update user properties
                     existingUser.Name = updatedUser.Name;
                     existingUser.Surname = updatedUser.Surname;
                     existingUser.Email = updatedUser.Email;
@@ -145,8 +146,10 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
+            var claims = DataService.GetClaims();
+
             // LINQ queries for reports
-            var approvedClaims = _claims.Where(c => c.Status == "Approved").ToList();
+            var approvedClaims = claims.Where(c => c.Status == "Approved").ToList();
             var monthlyReport = approvedClaims
                 .GroupBy(c => c.Month)
                 .Select(g => new {
@@ -169,20 +172,10 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
-            return View(_claims);
+            var claims = DataService.GetClaims();
+            return View(claims);
         }
 
-        // Helper method to get claims (for other controllers)
-        public static List<Claim> GetClaims() => _claims;
-        public static void AddClaim(Claim claim) => _claims.Add(claim);
-        public static void UpdateClaim(Claim claim)
-        {
-            var existingClaim = _claims.FirstOrDefault(c => c.ClaimId == claim.ClaimId);
-            if (existingClaim != null)
-            {
-                var index = _claims.IndexOf(existingClaim);
-                _claims[index] = claim;
-            }
-        }
+        // Note: Removed the static helper methods since we're using DataService directly
     }
 }
