@@ -6,23 +6,30 @@ namespace PROG6212_POE.Models
     {
         public int ClaimId { get; set; }
 
-        [Required(ErrorMessage = "Please enter your name.")]
-        public string LecturerName { get; set; } = string.Empty;
+        // Foreign key to User (instead of storing lecturer name/rate directly)
+        public int LecturerId { get; set; }
+        public virtual User Lecturer { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter total hours worked.")]
-        [Range(1, 200, ErrorMessage = "Hours must be between 1 and 200.")]
+        [Range(1, 180, ErrorMessage = "Hours must be between 1 and 180.")]
         public double TotalHours { get; set; }
 
-        [Required(ErrorMessage = "Please enter your hourly rate.")]
-        [Range(100, 1000, ErrorMessage = "Hourly rate must be between R100 and R1000.")]
-        public double HourlyRate { get; set; }
-
         public string Notes { get; set; } = string.Empty;
-
         public string Month { get; set; } = string.Empty;
-
         public string Status { get; set; } = "Pending Verification";
 
-        public double TotalAmount => TotalHours * HourlyRate;
+        // Auto-calculated property using lecturer's hourly rate
+        public double TotalAmount => TotalHours * (double)Lecturer.HourlyRate;
+
+        // Approval tracking
+        public int? VerifiedByCoordinatorId { get; set; }
+        public virtual User? VerifiedByCoordinator { get; set; }
+
+        public int? ApprovedByManagerId { get; set; }
+        public virtual User? ApprovedByManager { get; set; }
+
+        public DateTime SubmittedDate { get; set; } = DateTime.Now;
+        public DateTime? VerifiedDate { get; set; }
+        public DateTime? ApprovedDate { get; set; }
     }
 }
