@@ -1,21 +1,45 @@
-﻿@{
+﻿@model PROG6212_POE.Models.Claim
+@{
     ViewData["Title"] = "Submit Claim";
 }
 
-<h2>Submit Monthly Claim</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Submit Monthly Claim</h2>
 
-<form>
-    <div class="form-group mb-3">
-        <label for="claimMonth">Month</label>
-        <input type="month" id="claimMonth" class="form-control" />
-    </div>
-    <div class="form-group mb-3">
-        <label for="hoursWorked">Hours Worked</label>
-        <input type="number" id="hoursWorked" class="form-control" />
-    </div>
-    <div class="form-group mb-3">
-        <label for="hourlyRate">Hourly Rate</label>
-        <input type="text" id="hourlyRate" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-success">Submit Claim</button>
-</form>
+    <form asp-action="SubmitClaim" method="post" class="shadow p-4 rounded bg-light">
+        <div class="form-group mb-3">
+            <label asp-for="LecturerName"></label>
+            <input asp-for="LecturerName" class="form-control" placeholder="Enter your full name" />
+            <span asp-validation-for="LecturerName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Month">Month</label>
+            <input asp-for="Month" type="month" class="form-control" />
+            <span asp-validation-for="Month" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="TotalHours">Hours Worked</label>
+            <input asp-for="TotalHours" class="form-control" />
+            <span asp-validation-for="TotalHours" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="HourlyRate">Hourly Rate (R)</label>
+            <input asp-for="HourlyRate" class="form-control" />
+            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Notes">Additional Notes</label>
+            <textarea asp-for="Notes" class="form-control" placeholder="Optional"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 mt-3">Submit Claim</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

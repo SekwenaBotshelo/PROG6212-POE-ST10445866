@@ -4,10 +4,20 @@
 
 <h2>Upload Supporting Document</h2>
 
-<form enctype="multipart/form-data">
+<form asp-action="UploadDocuments" method="post" enctype="multipart/form-data">
     <div class="form-group mb-3">
-        <label for="supportingFile">Select File</label>
-        <input type="file" id="supportingFile" class="form-control" />
+        <label for="supportingFile">Select File (PDF, JPG, JPEG, PNG)</label>
+        <input type="file" id="supportingFile" name="supportingFile" class="form-control"
+               accept=".pdf,.jpg,.jpeg,.png" />
     </div>
     <button type="submit" class="btn btn-primary">Upload</button>
 </form>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-2">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-2">@TempData["ErrorMessage"]</div>
+}

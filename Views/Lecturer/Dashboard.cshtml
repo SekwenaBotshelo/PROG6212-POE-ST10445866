@@ -1,16 +1,26 @@
-﻿@{
+﻿@model IEnumerable<PROG6212_POE.Models.Claim>
+
+@{
     ViewData["Title"] = "Lecturer Dashboard";
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
+    <h1 class="mb-4 text-center">Lecturer Dashboard</h1>
 
-    <div class="mb-4">
-        <a class="btn btn-success me-2 disabled"><i class="bi bi-plus-circle"></i> Submit New Claim</a>
-        <a class="btn btn-primary disabled"><i class="bi bi-upload"></i> Upload Supporting Documents</a>
-        <a class="btn btn-secondary disabled"><i class="bi bi-card-list"></i> View Submitted Claims</a>
+    <!-- Buttons -->
+    <div class="d-flex justify-content-center mb-4">
+        <a asp-action="SubmitClaim" class="btn btn-success me-2"><i class="bi bi-plus-circle"></i> Submit New Claim</a>
+        <a asp-action="UploadDocuments" class="btn btn-primary me-2"><i class="bi bi-upload"></i> Upload Supporting Documents</a>
+        <a asp-action="TrackClaim" class="btn btn-secondary"><i class="bi bi-card-list"></i> View Submitted Claims</a>
     </div>
 
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+    }
+
+    <!-- Claims Table -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title mb-3">Submitted Claims</h5>
@@ -19,29 +29,39 @@
                     <thead class="table-light">
                         <tr>
                             <th>Claim ID</th>
+                            <th>Lecturer</th>
                             <th>Month</th>
                             <th>Total Hours</th>
                             <th>Hourly Rate</th>
+                            <th>Total Amount</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="6" class="text-center">No claims submitted yet.</td>
-                        </tr>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var claim in Model)
+                            {
+                                <tr>
+                                    <td>@claim.ClaimId</td>
+                                    <td>@claim.LecturerName</td>
+                                    <td>@claim.Month</td>
+                                    <td>@claim.TotalHours</td>
+                                    <td>R @claim.HourlyRate</td>
+                                    <td>R @claim.TotalAmount</td>
+                                    <td><span class="badge bg-warning">@claim.Status</span></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No claims submitted yet.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="card-title mb-3">Guidance</h5>
-            <p class="text-muted text-center">
-                Use the "Submit New Claim" button to add claims once the backend is implemented.
-            </p>
         </div>
     </div>
 </div>
