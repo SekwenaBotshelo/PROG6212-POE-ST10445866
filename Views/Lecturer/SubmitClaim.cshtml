@@ -6,40 +6,91 @@
 <div class="container mt-5">
     <h2 class="mb-4 text-center">Submit Monthly Claim</h2>
 
-    <form asp-action="SubmitClaim" method="post" class="shadow p-4 rounded bg-light">
-        <div class="form-group mb-3">
-            <label asp-for="LecturerName"></label>
-            <input asp-for="LecturerName" class="form-control" placeholder="Enter your full name" />
-            <span asp-validation-for="LecturerName" class="text-danger"></span>
+    <!-- Lecturer Info -->
+    @if (ViewBag.CurrentUser != null)
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Lecturer Information</h5>
+                <p class="mb-1"><strong>Name:</strong> @ViewBag.CurrentUser.FullName</p>
+                <p class="mb-0"><strong>Hourly Rate:</strong> R @ViewBag.CurrentUser.HourlyRate</p>
+            </div>
         </div>
+    }
+
+    <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+        @Html.AntiForgeryToken()
+
+        <!-- Auto-populated fields (hidden) -->
+        <input type="hidden" asp-for="LecturerId" />
 
         <div class="form-group mb-3">
-            <label asp-for="Month">Month</label>
-            <input asp-for="Month" type="month" class="form-control" />
+            <label asp-for="Month" class="form-label">Claim Month *</label>
+            <input asp-for="Month" type="month" class="form-control" required />
             <span asp-validation-for="Month" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label asp-for="TotalHours">Hours Worked</label>
-            <input asp-for="TotalHours" class="form-control" />
+            <label asp-for="TotalHours" class="form-label">Hours Worked *</label>
+            <input asp-for="TotalHours" class="form-control" id="hoursWorked"
+                   min="1" max="180" step="0.5" required />
             <span asp-validation-for="TotalHours" class="text-danger"></span>
+            <small class="form-text text-muted">Maximum 180 hours per month allowed.</small>
+        </div>
+
+        <!-- Auto-calculation display -->
+        <div class="form-group mb-3">
+            <label class="form-label">Calculated Amount</label>
+            <div class="input-group">
+                <span class="input-group-text">R</span>
+                <input type="text" class="form-control" id="totalAmount" readonly
+                       placeholder="Amount will be calculated automatically" />
+            </div>
         </div>
 
         <div class="form-group mb-3">
-            <label asp-for="HourlyRate">Hourly Rate (R)</label>
-            <input asp-for="HourlyRate" class="form-control" />
-            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+            <label asp-for="Notes" class="form-label">Additional Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3"
+                      placeholder="Optional: Add any additional information about this claim"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label asp-for="Notes">Additional Notes</label>
-            <textarea asp-for="Notes" class="form-control" placeholder="Optional"></textarea>
+            <label for="supportingDocument" class="form-label">Supporting Document</label>
+            <input type="file" class="form-control" id="supportingDocument"
+                   name="supportingDocument" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+            <small class="form-text text-muted">Optional: Upload PDF, Word, or image files</small>
         </div>
 
-        <button type="submit" class="btn btn-success w-100 mt-3">Submit Claim</button>
+        <button type="submit" class="btn btn-success w-100 mt-3">
+            <i class="bi bi-check-lg"></i> Submit Claim
+        </button>
     </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function() {
+            var hourlyRate = @(ViewBag.CurrentUser?.HourlyRate ?? 0);
+
+            $('#hoursWorked').on('input', function() {
+                var hours = parseFloat($(this).val()) || 0;
+                var total = hours * hourlyRate;
+                $('#totalAmount').val(total.toFixed(2));
+
+                // Validation feedback
+                if (hours > 180) {
+                    $(this).addClass('is-invalid');
+                    $(this).removeClass('is-valid');
+                } else if (hours > 0) {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-invalid is-valid');
+                }
+            });
+        });
+    </script>
 }

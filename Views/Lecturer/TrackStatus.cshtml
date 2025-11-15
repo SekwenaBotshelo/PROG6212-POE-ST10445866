@@ -1,36 +1,82 @@
 ﻿@model List<PROG6212_POE.Models.Claim>
+@{
+    ViewData["Title"] = "Track Claims";
+}
 
-<h2>Track Claim Status</h2>
+<div class="container mt-4">
+    <h1 class="mb-4">Track Your Claims</h1>
 
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Claim ID</th>
-            <th>Month</th>
-            <th>Total Hours</th>
-            <th>Hourly Rate</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
+    @if (ViewBag.CurrentUser != null)
+    {
+        <div class="alert alert-info">
+            Tracking claims for <strong>@ViewBag.CurrentUser.FullName</strong>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Month</th>
+                            <th>Total Hours</th>
+                            <th>Hourly Rate</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Submitted Date</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var claim in Model)
+                            {
+                                <tr>
+                                    <td>@claim.ClaimId</td>
+                                    <td>@claim.Month</td>
+                                    <td>@claim.TotalHours</td>
+                                    <td>R @claim.Lecturer.HourlyRate</td>
+                                    <td>R @claim.TotalAmount.ToString("F2")</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(claim.Status)">
+                                            @claim.Status
+                                        </span>
+                                    </td>
+                                    <td>@claim.SubmittedDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @{
+                                            var lastUpdate = claim.ApprovedDate ?? claim.VerifiedDate ?? claim.SubmittedDate;
+                                        }
+                                        @lastUpdate.ToString("yyyy-MM-dd")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">No claims found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        return status switch
         {
-            foreach (var claim in Model)
-            {
-                <tr>
-                    <td>@claim.ClaimId</td>
-                    <td>@claim.Month</td>
-                    <td>@claim.TotalHours</td>
-                    <td>@claim.HourlyRate.ToString("C")</td>
-                    <td>@claim.Status</td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="5" class="text-center">No claims submitted yet.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+            "Approved" => "bg-success",
+            "Verified" => "bg-info",
+            "Rejected" => "bg-danger",
+            _ => "bg-warning"
+        };
+    }
+}

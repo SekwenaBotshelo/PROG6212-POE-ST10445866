@@ -6,33 +6,68 @@
     <h1 class="display-4">Welcome to the Contract Monthly Claim System</h1>
     <p class="lead">A platform for submitting, verifying, and approving Independent Contractor monthly claims.</p>
 
-    <div class="row mt-4">
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Lecturer</h5>
-                    <p class="card-text">Submit claims, upload supporting documents, and track status.</p>
-                    <a href="/Lecturer/Dashboard" class="btn btn-primary">Go to Lecturer Portal</a>
+    <!-- Show login prompt if not logged in -->
+    @if (Context.Session.GetString("UserId") == null)
+    {
+        <div class="alert alert-info mt-4">
+            <h5>Please log in to access the system</h5>
+            <p>Use the navigation menu above or the buttons below to access your dashboard.</p>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Login to System
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success mt-4">
+            <h5>Welcome back, @Context.Session.GetString("UserName")!</h5>
+            <p>You are logged in as: <strong>@Context.Session.GetString("UserRole")</strong></p>
+            <a asp-controller="@Context.Session.GetString("UserRole")" asp-action="Dashboard" class="btn btn-success btn-lg">
+                <i class="bi bi-speedometer2"></i> Go to Dashboard
+            </a>
+        </div>
+    }
+
+    <!-- Role-based access cards (only show when not logged in) -->
+    @if (Context.Session.GetString("UserId") == null)
+    {
+        <div class="row mt-4">
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Lecturer</h5>
+                        <p class="card-text">Submit claims, upload supporting documents, and track status.</p>
+                        <a href="/Account/Login" class="btn btn-primary">Login as Lecturer</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Programme Coordinator</h5>
+                        <p class="card-text">Verify and forward lecturer claims for approval.</p>
+                        <a href="/Account/Login" class="btn btn-info">Login as Coordinator</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Academic Manager</h5>
+                        <p class="card-text">Approve verified claims and view reports.</p>
+                        <a href="/Account/Login" class="btn btn-success">Login as Manager</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">HR Manager</h5>
+                        <p class="card-text">Manage users and generate system reports.</p>
+                        <a href="/Account/Login" class="btn btn-warning">Login as HR</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Programme Coordinator</h5>
-                    <p class="card-text">Verify and forward lecturer claims for approval.</p>
-                    <a href="/Coordinator/Dashboard" class="btn btn-info">Go to Coordinator Portal</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Academic Manager</h5>
-                    <p class="card-text">Approve verified claims and view reports.</p>
-                    <a href="/Manager/Dashboard" class="btn btn-success">Go to Manager Portal</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    }
 </div>
