@@ -10,43 +10,340 @@
     <!-- ADD SWEETALERT2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .dark-mode {
-            background-color: #1a1a1a;
-            color: #ffffff;
+        /* Light mode (default) */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --table-striped: rgba(0, 0, 0, 0.02);
+            --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --placeholder-color: #6c757d;
         }
 
-            .dark-mode .navbar {
-                background-color: #2d2d2d !important;
-                border-bottom: 1px solid #444;
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #444;
+            --table-striped: rgba(255, 255, 255, 0.02);
+            --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+            --placeholder-color: #8e8e8e;
+        }
+
+        /* Base styles */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* Navigation */
+        [data-theme="dark"] .navbar {
+            background-color: var(--bg-secondary) !important;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .nav-link {
+            color: var(--text-primary) !important;
+        }
+
+            [data-theme="dark"] .nav-link.text-dark {
+                color: var(--text-primary) !important;
             }
 
-            .dark-mode .card {
-                background-color: #2d2d2d;
-                border-color: #444;
+        [data-theme="dark"] .navbar-brand {
+            color: var(--text-primary) !important;
+        }
+
+        /* Cards */
+        [data-theme="dark"] .card {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .card-header {
+            background-color: var(--bg-secondary) !important;
+            border-bottom-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .card-body {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Tables */
+        [data-theme="dark"] .table {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+        }
+
+            [data-theme="dark"] .table th {
+                background-color: var(--bg-secondary);
+                border-color: var(--border-color);
+                color: var(--text-primary);
             }
 
-            .dark-mode .table {
-                color: #ffffff;
+            [data-theme="dark"] .table td {
+                border-color: var(--border-color);
+                background-color: var(--bg-card);
+                color: var(--text-primary);
             }
 
-            .dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
-                background-color: #3a3a3a;
+        [data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: var(--table-striped);
+        }
+
+        [data-theme="dark"] .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.075);
+            color: var(--text-primary);
+        }
+
+        /* Forms */
+        [data-theme="dark"] .form-control {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+            [data-theme="dark"] .form-control:focus {
+                background-color: var(--bg-secondary);
+                border-color: #007bff;
+                color: var(--text-primary);
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
             }
 
-            .dark-mode .form-control {
-                background-color: #2d2d2d;
-                border-color: #555;
-                color: #ffffff;
+        [data-theme="dark"] .form-label {
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .form-text {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Placeholder text - FIXED */
+        [data-theme="dark"] .form-control::placeholder {
+            color: var(--placeholder-color) !important;
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .form-control::-webkit-input-placeholder {
+            color: var(--placeholder-color) !important;
+        }
+
+        [data-theme="dark"] .form-control::-moz-placeholder {
+            color: var(--placeholder-color) !important;
+        }
+
+        [data-theme="dark"] .form-control:-ms-input-placeholder {
+            color: var(--placeholder-color) !important;
+        }
+
+        [data-theme="dark"] .form-control:-moz-placeholder {
+            color: var(--placeholder-color) !important;
+        }
+
+        /* Textareas - Additional Notes fix */
+        [data-theme="dark"] textarea.form-control {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+            [data-theme="dark"] textarea.form-control::placeholder {
+                color: var(--placeholder-color) !important;
             }
 
-                .dark-mode .form-control:focus {
-                    background-color: #2d2d2d;
-                    border-color: #007bff;
-                    color: #ffffff;
+        /* Calendar/Date Picker - ICON COLOR ONLY - FIXED */
+        [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+        [data-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator,
+        [data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+            cursor: pointer;
+        }
+
+        /* Alerts */
+        [data-theme="dark"] .alert {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .alert-info {
+            background-color: rgba(13, 202, 240, 0.2);
+            border-color: #0dcaf0;
+            color: #cff4fc;
+        }
+
+        [data-theme="dark"] .alert-success {
+            background-color: rgba(25, 135, 84, 0.2);
+            border-color: #198754;
+            color: #d1e7dd;
+        }
+
+        [data-theme="dark"] .alert-warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+            color: #fff3cd;
+        }
+
+        [data-theme="dark"] .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            border-color: #dc3545;
+            color: #f8d7da;
+        }
+
+        /* Buttons */
+        [data-theme="dark"] .btn-outline-primary {
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+            [data-theme="dark"] .btn-outline-primary:hover {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: white;
+            }
+
+        [data-theme="dark"] .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+
+            [data-theme="dark"] .btn-outline-secondary:hover {
+                background-color: var(--border-color);
+                border-color: var(--border-color);
+                color: var(--text-primary);
+            }
+
+        /* Text colors */
+        [data-theme="dark"] .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] .text-dark {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Paragraphs and general text - FIX for Privacy/About pages */
+        [data-theme="dark"] p {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] li {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] span {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] small {
+            color: var(--text-secondary) !important;
+        }
+
+        [data-theme="dark"] .lead {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Footer */
+        [data-theme="dark"] footer {
+            background-color: var(--bg-secondary);
+            border-top-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+            [data-theme="dark"] footer a {
+                color: var(--text-secondary);
+            }
+
+                [data-theme="dark"] footer a:hover {
+                    color: var(--text-primary);
                 }
+
+        /* Background utilities */
+        [data-theme="dark"] .bg-light {
+            background-color: var(--bg-secondary) !important;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .bg-white {
+            background-color: var(--bg-secondary) !important;
+            color: var(--text-primary);
+        }
+
+        /* Search container */
+        [data-theme="dark"] .search-container .form-control {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .search-container .btn-outline-primary {
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+        /* Specific fixes for Privacy/About page content */
+        [data-theme="dark"] .card-text,
+        [data-theme="dark"] .list-group-item,
+        [data-theme="dark"] .display-4,
+        [data-theme="dark"] .display-5,
+        [data-theme="dark"] .display-6,
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
+            color: var(--text-primary) !important;
+        }
+
+        [data-theme="dark"] .text-body {
+            color: var(--text-primary) !important;
+        }
+
+        /* Print styles for dark mode */
+        @@media print {
+            [data-theme="dark"] {
+                --bg-primary: #ffffff;
+                --text-primary: #000000;
+            }
+
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+
+            .card {
+                background-color: white !important;
+                border-color: #dee2e6 !important;
+                color: black !important;
+            }
+
+            .table {
+                color: black !important;
+            }
+        }
 
         .search-container {
             min-width: 250px;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
     </style>
 </head>
@@ -66,6 +363,24 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="About">
+                                <i class="bi bi-info-circle"></i> About
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Contact">
+                                <i class="bi bi-envelope"></i> Contact
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                                <i class="bi bi-shield-check"></i> Privacy
                             </a>
                         </li>
 
@@ -123,12 +438,6 @@
                                 </a>
                             </li>
                         }
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-                                <i class="bi bi-shield-check"></i> Privacy
-                            </a>
-                        </li>
                     </ul>
 
                     <!-- Search Form - ALWAYS VISIBLE -->
@@ -194,6 +503,46 @@
             });
         </script>
     }
+
+    <!-- IMPROVED THEME TOGGLE SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const htmlElement = document.documentElement;
+
+            // Check for saved theme preference or default to light mode
+            const currentTheme = localStorage.getItem('theme') || 'light';
+
+            // Apply the saved theme
+            if (currentTheme === 'dark') {
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('bi-moon');
+                themeIcon.classList.add('bi-sun');
+            } else {
+                htmlElement.removeAttribute('data-theme');
+                themeIcon.classList.remove('bi-sun');
+                themeIcon.classList.add('bi-moon');
+            }
+
+            // Theme toggle event
+            themeToggle.addEventListener('click', function() {
+                if (htmlElement.getAttribute('data-theme') === 'dark') {
+                    // Switch to light mode
+                    htmlElement.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.remove('bi-sun');
+                    themeIcon.classList.add('bi-moon');
+                } else {
+                    // Switch to dark mode
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.remove('bi-moon');
+                    themeIcon.classList.add('bi-sun');
+                }
+            });
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

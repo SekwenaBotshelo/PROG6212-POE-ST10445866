@@ -248,11 +248,23 @@
                         demonstration purposes. All data is fictional and the system simulates real-world
                         claim management processes.
                     </div>
-                    <div class="mt-4">
+
+                    <!-- CONTACT LINK SECTION - ADDED HERE -->
+                    <div class="mt-4 p-3 border rounded bg-light">
+                        <h5 class="mb-3">
+                            <i class="bi bi-envelope text-primary"></i> Need More Information?
+                        </h5>
+                        <p class="mb-3">
+                            For questions about this system or to get in touch with the developer,
+                            please visit our Contact page.
+                        </p>
+                        <a asp-controller="Home" asp-action="Contact" class="btn btn-primary me-2">
+                            <i class="bi bi-envelope"></i> Contact Developer
+                        </a>
                         <a asp-controller="Home" asp-action="Privacy" class="btn btn-outline-primary me-2">
                             <i class="bi bi-shield-check"></i> Privacy Policy
                         </a>
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
                             <i class="bi bi-house"></i> Back to Home
                         </a>
                     </div>
@@ -274,5 +286,51 @@
     .list-group-item {
         border: none;
         padding: 0.5rem 0;
+    }
+
+    /* Dark mode support for About page */
+    .dark-mode .display-4 {
+        color: var(--text-primary);
+    }
+
+    .dark-mode .lead {
+        color: var(--text-secondary);
+    }
+
+    .dark-mode .card {
+        background-color: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    .dark-mode .card-header {
+        background-color: var(--bg-secondary) !important;
+        border-bottom-color: var(--border-color);
+    }
+
+    .dark-mode .list-group-item {
+        background-color: transparent;
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .alert {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+    }
+
+        .dark-mode .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .dark-mode .bg-light {
+        background-color: var(--bg-secondary) !important;
+        color: var(--text-primary);
     }
 </style>

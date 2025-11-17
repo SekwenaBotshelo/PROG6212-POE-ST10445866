@@ -3,51 +3,304 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 text-primary mb-3">Privacy Policy</h1>
+        <p class="lead">Data Protection and Privacy Practices for the Contract Monthly Claim System (CMCS)</p>
+    </div>
 
-    <p>
-        The Contract Monthly Claim System (CMCS) is designed to streamline the
-        submission, verification, and approval of monthly claims for Independent
-        Contractor lecturers. This Privacy Policy outlines how we handle user data,
-        even at the prototype stage, to demonstrate best practices in secure software
-        development. For more details about the system’s purpose and scope, visit the
-        <a asp-controller="Home" asp-action="About">About Page</a>.
-    </p>
+    <!-- Introduction -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm border-light">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">
+                        <i class="bi bi-shield-check text-primary"></i> System Overview
+                    </h3>
+                    <p class="card-text">
+                        The <strong>Contract Monthly Claim System (CMCS)</strong> is an academic prototype
+                        designed to demonstrate secure software development practices in claim management.
+                        This Privacy Policy outlines our commitment to data protection and explains how
+                        information is handled within the system.
+                    </p>
+                    <p class="card-text">
+                        <strong>Important Note:</strong> This is a demonstration system. All data is fictional
+                        and used solely for academic purposes. No real personal or financial information
+                        is processed or stored.
+                    </p>
+                    <div class="text-center mt-3">
+                        <a asp-controller="Home" asp-action="About" class="btn btn-outline-primary">
+                            <i class="bi bi-info-circle"></i> Learn More About CMCS
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h3 class="mt-4">1. Data Collection</h3>
-    <p>At this prototype stage, all data entered into the system is fictional and used solely for demonstration purposes. In a production environment, the system would collect the following data:</p>
-    <ul>
-        <li>Lecturer details (name, ID, contact information)</li>
-        <li>Claim information (hours worked, hourly rate, claim month)</li>
-        <li>Supporting documents uploaded for claims</li>
-    </ul>
+    <!-- Data Handling Sections -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-database text-success"></i> Data Management Practices
+            </h3>
 
-    <h3 class="mt-4">2. Data Usage</h3>
-    <p>Data collected is intended solely for:</p>
-    <ul>
-        <li>Submitting and tracking monthly claims</li>
-        <li>Verification and approval by Programme Coordinators and Academic Managers</li>
-        <li>Maintaining transparency and accountability in the claims process</li>
-    </ul>
+            <div class="row g-4">
+                <!-- Data Collection -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-collection"></i> Data Collection</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Prototype Data:</strong> All data in this system is fictional and generated for demonstration purposes.</p>
+                            <p><strong>In Production:</strong> The system architecture supports collection of:</p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="bi bi-person text-primary"></i>
+                                    <strong>User Information:</strong> Names, emails, roles, hourly rates
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-file-text text-info"></i>
+                                    <strong>Claim Data:</strong> Hours worked, monthly claims, calculated amounts
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-file-earmark text-warning"></i>
+                                    <strong>Documents:</strong> Supporting files (PDF, Word, Images)
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-clock text-secondary"></i>
+                                    <strong>Timestamps:</strong> Submission, verification, and approval dates
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    <h3 class="mt-4">3. Data Security</h3>
-    <p>In a fully implemented system, all sensitive information would be stored securely and access restricted to authorized personnel only. During this prototype stage, no real personal information is stored.</p>
+                <!-- Data Usage -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-gear"></i> Data Usage</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Data is used exclusively for system functionality:</p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="bi bi-send-check text-success"></i>
+                                    <strong>Claim Processing:</strong> Workflow management from submission to approval
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-graph-up text-info"></i>
+                                    <strong>Reporting:</strong> Analytics and financial reporting for management
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-shield-lock text-warning"></i>
+                                    <strong>Authentication:</strong> Role-based access control and session management
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-clock-history text-secondary"></i>
+                                    <strong>Audit Trail:</strong> Tracking claim status and user actions
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h3 class="mt-4">4. Data Retention</h3>
-    <p>
-        In a production environment, claim records and associated documents would be
-        retained only for the duration required by institutional policy and legal
-        compliance. In this prototype, no actual data is stored beyond the
-        demonstration session.
-    </p>
+    <!-- Security & Technical Measures -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-lock text-warning"></i> Security & Technical Measures
+            </h3>
 
-    <h3 class="mt-4">5. User Responsibilities</h3>
-    <p>Users should ensure that any real data used in a production environment is accurate and compliant with institutional privacy standards. Prototype data is for demonstration purposes only.</p>
+            <div class="row g-4">
+                <!-- Security Features -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-warning">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0"><i class="bi bi-shield-check"></i> Security Implementation</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <strong>Session Management:</strong> Secure user session handling
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <strong>Role-Based Access:</strong> Strict permission controls per user role
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <strong>Input Validation:</strong> Client and server-side data validation
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <strong>File Validation:</strong> Secure document upload with type restrictions
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <strong>CSRF Protection:</strong> Anti-forgery token implementation
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    <h3 class="mt-4">6. Contact</h3>
-    <p>
-        If you have any questions about the privacy practices of CMCS, please visit
-        our <a asp-controller="Home" asp-action="Contact">Contact Page</a> or
-        reach out to the system administrator or project supervisor.
-    </p>
+                <!-- Data Protection -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-database-lock"></i> Data Protection</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="bi bi-memory text-primary"></i>
+                                    <strong>In-Memory Storage:</strong> Data persists only during application runtime
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-eye-slash text-secondary"></i>
+                                    <strong>Data Isolation:</strong> Users can only access authorized information
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-file-lock text-warning"></i>
+                                    <strong>Document Security:</strong> Uploaded files stored with access controls
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-arrow-repeat text-success"></i>
+                                    <strong>Automatic Cleanup:</strong> Data reset on application restart
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Rights & Responsibilities -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-check"></i> User Rights & Responsibilities</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>👤 User Responsibilities</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">✓ Use appropriate fictional data for testing</li>
+                                <li class="mb-2">✓ Maintain confidentiality of demonstration credentials</li>
+                                <li class="mb-2">✓ Follow role-based access guidelines</li>
+                                <li class="mb-2">✓ Report any security concerns immediately</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>🛡️ System Protections</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">✓ No collection of real personal data</li>
+                                <li class="mb-2">✓ Automatic data sanitization</li>
+                                <li class="mb-2">✓ Comprehensive access logging</li>
+                                <li class="mb-2">✓ Regular security assessments</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compliance & Future Considerations -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-dark">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="bi bi-clipboard-data"></i> Compliance & Future Considerations</h4>
+                </div>
+                <div class="card-body">
+                    <h5>📋 Production Readiness</h5>
+                    <p>
+                        For production deployment, this system would implement additional measures including
+                        database encryption, comprehensive audit logging, GDPR compliance features, and
+                        integration with institutional identity providers.
+                    </p>
+
+                    <h5 class="mt-4">🔒 Data Retention Policy</h5>
+                    <p>
+                        In a production environment, data retention would follow institutional policies
+                        and legal requirements. Claim records would typically be maintained for 7 years
+                        for financial audit purposes, with secure archival and deletion procedures.
+                    </p>
+
+                    <h5 class="mt-4">🌐 International Standards</h5>
+                    <p>
+                        The system architecture supports compliance with international standards including:
+                    </p>
+                    <ul>
+                        <li>General Data Protection Regulation (GDPR)</li>
+                        <li>Protection of Personal Information Act (POPIA)</li>
+                        <li>Family Educational Rights and Privacy Act (FERPA)</li>
+                        <li>Institutional data protection policies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Additional Information -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">
+                        <i class="bi bi-question-circle text-primary"></i> Additional Information
+                    </h4>
+                    <p class="card-text">
+                        This privacy policy reflects the current prototype implementation.
+                        For a production system, additional legal review and institutional
+                        policy alignment would be required.
+                    </p>
+                    <div class="alert alert-info mt-3">
+                        <strong>Academic Project:</strong> This system was developed for PROG6212 - Advanced Programming<br>
+                        <strong>Student:</strong> ST10445866 - Botshelo Koketso Sekwena<br>
+                        <strong>Purpose:</strong> Academic demonstration of secure software development practices
+                    </div>
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="About" class="btn btn-primary me-2">
+                            <i class="bi bi-info-circle"></i> About CMCS
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .list-group-item {
+        border: none;
+        padding: 0.75rem 0;
+        background: transparent;
+    }
+
+    .alert {
+        border-left: 4px solid #0dcaf0;
+    }
+</style>
