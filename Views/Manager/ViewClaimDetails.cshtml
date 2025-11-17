@@ -6,12 +6,6 @@
 <div class="container mt-4">
     <h2>Claim Details - ID: @Model.ClaimId</h2>
 
-    <!-- Success Message -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="row">
@@ -57,16 +51,16 @@
             }
 
             <div class="mt-4">
-                <form asp-action="ApproveClaim" method="post" class="d-inline">
+                <form asp-action="ApproveClaim" method="post" class="d-inline" id="approveForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="claimId" value="@Model.ClaimId" />
-                    <button type="submit" class="btn btn-success">Approve Claim</button>
+                    <button type="button" onclick="confirmApprove()" class="btn btn-success">Approve Claim</button>
                 </form>
 
-                <form asp-action="RejectClaim" method="post" class="d-inline">
+                <form asp-action="RejectClaim" method="post" class="d-inline" id="rejectForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="claimId" value="@Model.ClaimId" />
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this claim?')">Reject Claim</button>
+                    <button type="button" onclick="confirmReject()" class="btn btn-danger">Reject Claim</button>
                 </form>
 
                 <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
@@ -74,3 +68,48 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function confirmApprove() {
+            Swal.fire({
+                title: 'Approve Claim?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Claim ID:</strong> #@Model.ClaimId</p>
+                        <p><strong>Lecturer:</strong> @Model.SafeLecturerName</p>
+                        <p><strong>Amount:</strong> R @Model.TotalAmount.ToString("F2")</p>
+                        <p class="text-muted">This will approve the claim for payment.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Approve!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('approveForm').submit();
+                }
+            });
+        }
+
+        function confirmReject() {
+            Swal.fire({
+                title: 'Reject Claim?',
+                text: 'Are you sure you want to reject this claim? This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Reject!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('rejectForm').submit();
+                }
+            });
+        }
+    </script>
+}

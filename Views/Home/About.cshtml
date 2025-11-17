@@ -3,38 +3,276 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">About the Contract Monthly Claim System (CMCS)</h1>
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 text-primary mb-3">About the Contract Monthly Claim System (CMCS)</h1>
+        <p class="lead">A Comprehensive Academic Claims Management Platform</p>
+    </div>
 
-    <p>
-        The Contract Monthly Claim System (CMCS) was developed as part of the
-        PROG6212 module to demonstrate the use of secure, efficient, and
-        user-friendly systems for processing Independent Contractor lecturer claims.
-    </p>
+    <!-- System Overview -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">
+                        <i class="bi bi-info-circle text-primary"></i> System Overview
+                    </h3>
+                    <p class="card-text">
+                        The <strong>Contract Monthly Claim System (CMCS)</strong> is a sophisticated web application
+                        developed as part of the <strong>PROG6212 - Advanced Programming</strong> module. This system
+                        demonstrates enterprise-level development practices with a focus on security, efficiency,
+                        and user experience in academic claim processing.
+                    </p>
+                    <p class="card-text">
+                        Built using <strong>ASP.NET Core MVC</strong> with a modern tech stack, CMCS provides a
+                        complete workflow solution for managing independent contractor lecturer claims from
+                        submission through to payment approval.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h3 class="mt-4">System Purpose</h3>
-    <p>
-        The system streamlines the workflow of claim submissions, verifications, and
-        approvals by providing separate dashboards for <strong>Lecturers</strong>,
-        <strong>Programme Coordinators</strong>, and <strong>Academic Managers</strong>.
-    </p>
+    <!-- System Architecture -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-diagram-3 text-success"></i> System Architecture & Features
+            </h3>
 
-    <h3 class="mt-4">Prototype Stage</h3>
-    <p>
-        Currently, this is a prototype system designed for demonstration purposes only.
-        All data used is fictional and intended to simulate real-world scenarios in
-        claim management.
-    </p>
+            <div class="row g-4">
+                <!-- Technical Stack -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-code-slash"></i> Technical Stack</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Backend:</strong> ASP.NET Core 6.0 MVC
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Frontend:</strong> Bootstrap 5.1, jQuery, Razor Pages
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Styling:</strong> Custom CSS with Dark Mode Support
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Icons:</strong> Bootstrap Icons
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Notifications:</strong> SweetAlert2 for interactive alerts
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Data Management:</strong> In-Memory Data Service with Entity Relationships
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    <h3 class="mt-4">Future Enhancements</h3>
-    <ul>
-        <li>Secure authentication and role-based access control</li>
-        <li>Integration with institutional payroll systems</li>
-        <li>Comprehensive reporting and analytics</li>
-        <li>Data encryption and retention policies</li>
-    </ul>
+                <!-- Core Features -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-star-fill"></i> Core Features</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Multi-Role Authentication:</strong> Session-based user management
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Workflow Automation:</strong> Pending → Verified → Approved → Paid
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Document Management:</strong> File upload with validation
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Real-time Calculations:</strong> Automatic amount computation
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Comprehensive Reporting:</strong> Manager & HR analytics
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Responsive Design:</strong> Mobile-first approach
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <p class="mt-4">
-        For more details about our data handling practices, please see our
-        <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>.
-    </p>
+    <!-- User Roles & Workflow -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-people-fill text-info"></i> User Roles & Workflow
+            </h3>
+
+            <div class="row g-4">
+                <!-- Lecturer -->
+                <div class="col-md-3">
+                    <div class="card text-center h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-person"></i> Lecturer</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Submit monthly claims with supporting documents</p>
+                            <ul class="list-unstyled small">
+                                <li>✓ Claim Submission</li>
+                                <li>✓ Document Upload</li>
+                                <li>✓ Claim Tracking</li>
+                                <li>✓ Status Monitoring</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coordinator -->
+                <div class="col-md-3">
+                    <div class="card text-center h-100">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Coordinator</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Verify claim accuracy and compliance</p>
+                            <ul class="list-unstyled small">
+                                <li>✓ Claim Verification</li>
+                                <li>✓ Document Review</li>
+                                <li>✓ Quality Assurance</li>
+                                <li>✓ Forward to Management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manager -->
+                <div class="col-md-3">
+                    <div class="card text-center h-100">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0"><i class="bi bi-graph-up"></i> Manager</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Approve claims and generate reports</p>
+                            <ul class="list-unstyled small">
+                                <li>✓ Final Approval</li>
+                                <li>✓ Financial Oversight</li>
+                                <li>✓ Analytics & Reports</li>
+                                <li>✓ Budget Management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HR -->
+                <div class="col-md-3">
+                    <div class="card text-center h-100">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0"><i class="bi bi-people"></i> HR Administrator</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">System administration and user management</p>
+                            <ul class="list-unstyled small">
+                                <li>✓ User Management</li>
+                                <li>✓ System Oversight</li>
+                                <li>✓ Comprehensive Reports</li>
+                                <li>✓ Data Management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Implementation -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-check-circle"></i> Current Implementation Status</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>✅ Fully Implemented</h5>
+                            <ul>
+                                <li>Complete multi-role authentication system</li>
+                                <li>End-to-end claim workflow management</li>
+                                <li>Interactive dashboards for all user types</li>
+                                <li>File upload with validation (PDF, Word, Images)</li>
+                                <li>Real-time amount calculations</li>
+                                <li>Professional reporting with print functionality</li>
+                                <li>SweetAlert2 confirmation dialogs</li>
+                                <li>Responsive design with dark mode support</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>🔄 Advanced Features</h5>
+                            <ul>
+                                <li>Session-based security management</li>
+                                <li>Data service with relationship mapping</li>
+                                <li>Form validation with client & server-side checks</li>
+                                <li>Professional UI/UX with Bootstrap 5</li>
+                                <li>Search functionality across dashboards</li>
+                                <li>Comprehensive error handling</li>
+                                <li>Print-optimized report layouts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development Information -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">
+                        <i class="bi bi-code-square text-secondary"></i> Development Information
+                    </h4>
+                    <p class="card-text">
+                        <strong>Module:</strong> PROG6212 - Advanced Programming<br>
+                        <strong>Student:</strong> ST10445866 - Botshelo Koketso Sekwena<br>
+                        <strong>Institution:</strong> Independent Institute of Education<br>
+                        <strong>Academic Year:</strong> 2024
+                    </p>
+                    <div class="alert alert-warning mt-3">
+                        <strong>Note:</strong> This is a fully functional prototype system designed for academic
+                        demonstration purposes. All data is fictional and the system simulates real-world
+                        claim management processes.
+                    </div>
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Privacy" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-shield-check"></i> Privacy Policy
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .list-group-item {
+        border: none;
+        padding: 0.5rem 0;
+    }
+</style>

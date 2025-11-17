@@ -11,7 +11,7 @@
             <h5 class="card-title mb-0"><i class="bi bi-person-plus"></i> Add New System User</h5>
         </div>
         <div class="card-body">
-            <form asp-action="CreateUser" method="post">
+            <form asp-action="CreateUser" method="post" id="userForm">
                 @Html.AntiForgeryToken()
 
                 <div class="row">
@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success">
+                    <button type="button" onclick="confirmCreate()" class="btn btn-success">
                         <i class="bi bi-check-lg"></i> Create User
                     </button>
                     <a asp-action="Dashboard" class="btn btn-secondary">
@@ -95,5 +95,40 @@
             // Trigger change on page load in case of form validation errors
             $('#roleSelect').trigger('change');
         });
+
+        function confirmCreate() {
+            // Basic validation
+            const name = document.querySelector('[name="Name"]').value;
+            const surname = document.querySelector('[name="Surname"]').value;
+            const email = document.querySelector('[name="Email"]').value;
+            const role = document.querySelector('[name="Role"]').value;
+
+            if (!name || !surname || !email || !role) {
+                Swal.fire('Error', 'Please fill in all required fields.', 'error');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Create New User?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Name:</strong> ${name} ${surname}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Role:</strong> ${role}</p>
+                        <p class="text-muted">Please confirm all user details are correct before creating.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Create User!',
+                cancelButtonText: 'Review Details'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('userForm').submit();
+                }
+            });
+        }
     </script>
 }

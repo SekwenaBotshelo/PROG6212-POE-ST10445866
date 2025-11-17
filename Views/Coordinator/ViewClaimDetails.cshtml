@@ -6,18 +6,6 @@
 <div class="container mt-4">
     <h2>Claim Details - ID: @Model.ClaimId</h2>
 
-    <!-- Success Message -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-
-    <!-- Error Message -->
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="row">
@@ -63,19 +51,18 @@
             @if (Model.Status == "Pending Verification")
             {
                 <div class="mt-4">
-                    <form asp-action="VerifyClaim" method="post" class="d-inline">
+                    <form asp-action="VerifyClaim" method="post" class="d-inline" id="verifyForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="claimId" value="@Model.ClaimId" />
-                        <button type="submit" class="btn btn-success">
+                        <button type="button" onclick="confirmVerify()" class="btn btn-success">
                             <i class="bi bi-check-circle"></i> Verify Claim
                         </button>
                     </form>
 
-                    <form asp-action="RejectClaim" method="post" class="d-inline">
+                    <form asp-action="RejectClaim" method="post" class="d-inline" id="rejectForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="claimId" value="@Model.ClaimId" />
-                        <button type="submit" class="btn btn-danger"
-                                onclick="return confirm('Are you sure you want to reject this claim?')">
+                        <button type="button" onclick="confirmReject()" class="btn btn-danger">
                             <i class="bi bi-x-circle"></i> Reject Claim
                         </button>
                     </form>
@@ -90,3 +77,48 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function confirmVerify() {
+            Swal.fire({
+                title: 'Verify Claim?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Claim ID:</strong> #@Model.ClaimId</p>
+                        <p><strong>Lecturer:</strong> @Model.SafeLecturerName</p>
+                        <p><strong>Hours:</strong> @Model.TotalHours</p>
+                        <p class="text-muted">This will mark the claim as verified and send it to management.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Verify!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('verifyForm').submit();
+                }
+            });
+        }
+
+        function confirmReject() {
+            Swal.fire({
+                title: 'Reject Claim?',
+                text: 'Are you sure you want to reject this claim? This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Reject!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('rejectForm').submit();
+                }
+            });
+        }
+    </script>
+}

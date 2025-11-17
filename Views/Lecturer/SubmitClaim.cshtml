@@ -18,19 +18,7 @@
         </div>
     }
 
-    <!-- Success Message -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-
-    <!-- Error Message -->
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-
-    <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+    <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light" id="claimForm">
         @Html.AntiForgeryToken()
 
         <!-- Auto-populated fields (hidden) -->
@@ -67,7 +55,6 @@
             <label asp-for="Notes" class="form-label">Additional Notes <small class="text-muted">(Optional)</small></label>
             <textarea asp-for="Notes" class="form-control" rows="3"
                       placeholder="Optional: Add any additional information about this claim"></textarea>
-            <!-- Remove validation span for Notes -->
         </div>
 
         <!-- SUPPORTING DOCUMENT SECTION (OPTIONAL) -->
@@ -80,7 +67,7 @@
             </small>
         </div>
 
-        <button type="submit" class="btn btn-success w-100 mt-3">
+        <button type="button" onclick="validateAndSubmit()" class="btn btn-success w-100 mt-3">
             <i class="bi bi-check-lg"></i> Submit Claim
         </button>
 
@@ -118,20 +105,43 @@
             if ($('#hoursWorked').val()) {
                 $('#hoursWorked').trigger('input');
             }
+        });
 
-            // Disable validation for Notes field
-            $('form').removeData('validator');
-            $('form').removeData('unobtrusiveValidation');
-            $.validator.unobtrusive.parse('form');
+        function validateAndSubmit() {
+            const hours = document.querySelector('[name="TotalHours"]').value;
+            const month = document.querySelector('[name="Month"]').value;
 
-            // Remove any validation rules from Notes
-            $('[data-val-length]').each(function() {
-                if ($(this).attr('name') === 'Notes') {
-                    $(this).removeAttr('data-val-length');
-                    $(this).removeAttr('data-val-length-max');
-                    $(this).removeAttr('data-val');
+            if (!hours || hours <= 0 || hours > 180) {
+                Swal.fire('Error', 'Please enter valid hours (1-180).', 'error');
+                return;
+            }
+
+            if (!month) {
+                Swal.fire('Error', 'Please select a month.', 'error');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Ready to Submit?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Month:</strong> ${month}</p>
+                        <p><strong>Hours:</strong> ${hours}</p>
+                        <p><strong>Estimated Amount:</strong> R ${(hours * @(ViewBag.CurrentUser?.HourlyRate ?? 0)).toFixed(2)}</p>
+                        <p class="text-muted">Please confirm your claim details before submission.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Submit Claim!',
+                cancelButtonText: 'Review Details'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('claimForm').submit();
                 }
             });
-        });
+        }
     </script>
 }

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- ADD SWEETALERT2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .dark-mode {
             background-color: #1a1a1a;
@@ -166,6 +168,32 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- SWEETALERT2 MESSAGE HANDLING -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                timer: 4000
+            });
+        </script>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
