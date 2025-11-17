@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
 using PROG6212_POE.Services;
-using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
@@ -29,7 +28,7 @@ namespace PROG6212_POE.Controllers
 
             ViewBag.CurrentUser = manager;
 
-            // Get claims pending approval using DataService
+            // Get claims - DataService.GetClaims() now loads related data automatically
             var claims = DataService.GetClaims();
             var verifiedClaims = claims.Where(c => c.Status == "Verified").ToList();
             var approvedClaims = claims.Where(c => c.Status == "Approved" && c.ApprovedByManagerId == manager.UserId).ToList();
@@ -51,6 +50,7 @@ namespace PROG6212_POE.Controllers
             if (manager == null)
                 return RedirectToAction("Logout", "Account");
 
+            // Get claims with related data loaded automatically
             var claims = DataService.GetClaims();
             var verifiedClaims = claims.Where(c => c.Status == "Verified").ToList();
 
@@ -64,6 +64,7 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "Manager")
                 return RedirectToAction("AccessDenied", "Account");
 
+            // Get the specific claim - DataService.GetClaims() loads related data
             var claims = DataService.GetClaims();
             var claim = claims.FirstOrDefault(c => c.ClaimId == id);
 
@@ -152,6 +153,7 @@ namespace PROG6212_POE.Controllers
             if (manager == null)
                 return RedirectToAction("Logout", "Account");
 
+            // Get claims with related data loaded automatically
             var claims = DataService.GetClaims();
             var approvedClaims = claims.Where(c => c.Status == "Approved").ToList();
 
@@ -172,6 +174,22 @@ namespace PROG6212_POE.Controllers
             ViewBag.CurrentUser = manager;
 
             return View(approvedClaims);
+        }
+
+        // GET: /Manager/AllClaims (Optional - for viewing all claims)
+        public IActionResult AllClaims()
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Manager")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var manager = GetCurrentManager();
+            if (manager == null)
+                return RedirectToAction("Logout", "Account");
+
+            var claims = DataService.GetClaims();
+            ViewBag.CurrentUser = manager;
+
+            return View(claims);
         }
     }
 }

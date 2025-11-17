@@ -1,97 +1,420 @@
 ﻿@model List<PROG6212_POE.Models.Claim>
 @{
-    ViewData["Title"] = "Generate Reports";
+    ViewData["Title"] = "HR Comprehensive Claims Report";
+    Layout = null;
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - University HR System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.4;
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+            background: white;
+        }
 
-    <!-- Summary Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card text-center bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Approved Amount</h5>
-                    <p class="card-text display-6">R @ViewBag.TotalApprovedAmount?.ToString("F2")</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Approved Claims</h5>
-                    <p class="card-text display-6">@ViewBag.TotalApprovedClaims</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center bg-info text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Report Period</h5>
-                    <p class="card-text display-6">@DateTime.Now.ToString("MMMM yyyy")</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        .letterhead {
+            border-bottom: 4px double #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-    <!-- Monthly Report -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <h5 class="card-title mb-0"><i class="bi bi-graph-up"></i> Monthly Summary</h5>
+        .university-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .department-name {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+
+        .report-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #c0392b;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .report-period {
+            font-size: 16px;
+            color: #34495e;
+            margin: 10px 0;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .kpi-card {
+            background: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin: 40px 0;
+            page-break-inside: avoid;
+        }
+
+        .section-header {
+            background: #34495e;
+            color: white;
+            padding: 12px 20px;
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .section-content {
+            border: 1px solid #bdc3c7;
+            border-top: none;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+            padding: 12px 8px;
+            text-align: left;
+            border: 1px solid #34495e;
+        }
+
+        td {
+            padding: 10px 8px;
+            border: 1px solid #bdc3c7;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .numeric {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .total-row {
+            background: #2c3e50 !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .bg-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .bg-info {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .bg-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .bg-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .bg-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 3px double #bdc3c7;
+            font-size: 11px;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .print-controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #c0392b;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        /* Print-specific styles */
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+                font-size: 12px;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .section {
+                page-break-inside: avoid;
+                margin: 20px 0;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            .footer {
+                margin-top: 30px;
+                font-size: 9px;
+            }
+            /* Ensure proper page breaks */
+            .page-break {
+                page-break-before: always;
+            }
+            /* Improve print colors */
+            .bg-primary, .bg-secondary, .table-dark {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        /* Screen-only styles */
+        @@media screen {
+            .print-only {
+                display: none;
+            }
+
+            .container {
+                max-width: 1200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Letterhead -->
+        <div class="letterhead">
+            <div class="university-name">UNIVERSITY OF TECHNOLOGY</div>
+            <div class="department-name">Human Resources Department</div>
+            <div class="report-title">COMPREHENSIVE CLAIMS ANALYSIS</div>
+            <div class="report-period">Report Period: @DateTime.Now.ToString("MMMM yyyy")</div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead class="table-light">
+
+        <!-- Meta Information -->
+        <div class="meta-info">
+            <div><strong>Generated By:</strong> @ViewBag.CurrentUser?.FullName</div>
+            <div><strong>Report ID:</strong> HR-CLR-@DateTime.Now.ToString("yyyyMMdd-HHmm")</div>
+            <div><strong>Date Generated:</strong> @DateTime.Now.ToString("dd MMMM yyyy")</div>
+        </div>
+
+        <!-- Key Performance Indicators -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Claims</div>
+                <div class="kpi-value">@ViewBag.TotalClaims</div>
+                <div>All Statuses</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Approved Amount</div>
+                <div class="kpi-value">R @ViewBag.TotalApprovedAmount?.ToString("F2")</div>
+                <div>Financial Impact</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Pending Review</div>
+                <div class="kpi-value">@ViewBag.PendingClaims</div>
+                <div>Requires Action</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg. Processing Time</div>
+                <div class="kpi-value">@ViewBag.AverageProcessingDays?.ToString("F1")d</div>
+                <div>Efficiency Metric</div>
+            </div>
+        </div>
+
+        <!-- Claims by Status -->
+        <div class="section">
+            <div class="section-header">Claims Distribution by Status</div>
+            <div class="section-content">
+                <table>
+                    <thead>
                         <tr>
-                            <th>Month</th>
-                            <th>Number of Claims</th>
+                            <th>Status</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
                             <th>Total Amount</th>
-                            <th>Average per Claim</th>
+                            <th>Average Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (ViewBag.MonthlyReport != null)
+                        @if (ViewBag.ClaimsByStatus != null)
                         {
-                            foreach (var item in ViewBag.MonthlyReport)
+                            foreach (var status in ViewBag.ClaimsByStatus)
                             {
                                 <tr>
-                                    <td>@item.Month</td>
-                                    <td>@item.ClaimCount</td>
-                                    <td>R @item.TotalAmount.ToString("F2")</td>
-                                    <td>R @((item.TotalAmount / item.ClaimCount).ToString("F2"))</td>
+                                    <td><span class="status-badge @GetStatusBadgeClass(status.Status)">@status.Status</span></td>
+                                    <td>@status.Count</td>
+                                    <td class="numeric">@status.Percentage.ToString("F1")%</td>
+                                    <td class="numeric">R @status.TotalAmount.ToString("F2")</td>
+                                    <td class="numeric">R @status.AverageAmount.ToString("F2")</td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center text-muted">No report data available</td>
+                                <td colspan="5" class="text-center text-muted">No status data available</td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- Approved Claims Details -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="card-title mb-0"><i class="bi bi-list-check"></i> Approved Claims Details</h5>
+        <!-- Monthly Trends -->
+        <div class="section">
+            <div class="section-header">Monthly Claims Trends</div>
+            <div class="section-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Claims</th>
+                            <th>Approved</th>
+                            <th>Pending</th>
+                            <th>Total Amount</th>
+                            <th>Growth %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.MonthlySummary != null)
+                        {
+                            foreach (var month in ViewBag.MonthlySummary)
+                            {
+                                <tr>
+                                    <td>@month.Month</td>
+                                    <td>@month.ClaimCount</td>
+                                    <td>@month.ApprovedCount</td>
+                                    <td>@month.PendingCount</td>
+                                    <td class="numeric">R @month.TotalAmount.ToString("F2")</td>
+                                    <td class="numeric @(month.GrowthPercentage >= 0 ? "text-success" : "text-danger")">
+                                        @month.GrowthPercentage.ToString("+0.0;-0.0;0.0")%
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No monthly data available</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-light">
+
+        <!-- Detailed Claims Register -->
+        <div class="section">
+            <div class="section-header">Detailed Claims Register</div>
+            <div class="section-content">
+                <table>
+                    <thead>
                         <tr>
                             <th>Claim ID</th>
                             <th>Lecturer</th>
+                            <th>Department</th>
                             <th>Month</th>
                             <th>Hours</th>
                             <th>Amount</th>
-                            <th>Approved Date</th>
-                            <th>Approved By</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Processed</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,35 +423,67 @@
                             foreach (var claim in Model)
                             {
                                 <tr>
-                                    <td>@claim.ClaimId</td>
-                                    <td>@claim.Lecturer.FullName</td>
+                                    <td>#@claim.ClaimId</td>
+                                    <td>@claim.SafeLecturerName</td>
+                                    <td>Academic</td>
                                     <td>@claim.Month</td>
-                                    <td>@claim.TotalHours</td>
-                                    <td>R @claim.TotalAmount.ToString("F2")</td>
-                                    <td>@claim.ApprovedDate?.ToString("yyyy-MM-dd")</td>
-                                    <td>@(claim.ApprovedByManager?.FullName ?? "System")</td>
+                                    <td>@claim.TotalHours.ToString("F1")</td>
+                                    <td class="numeric">R @claim.TotalAmount.ToString("F2")</td>
+                                    <td>
+                                        <span class="status-badge @GetStatusBadgeClass(claim.Status)">
+                                            @claim.Status
+                                        </span>
+                                    </td>
+                                    <td>@claim.SubmittedDate.ToString("dd/MM/yy")</td>
+                                    <td>@(claim.ApprovedDate?.ToString("dd/MM/yy") ?? "Pending")</td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted">No approved claims found</td>
+                                <td colspan="9" class="text-center text-muted">No claims data available</td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Report Footer -->
+        <div class="footer">
+            <div><strong>CONFIDENTIAL - FOR INTERNAL USE ONLY</strong></div>
+            <div>University of Technology - Human Resources Department</div>
+            <div>Generated: @DateTime.Now.ToString("dddd, dd MMMM yyyy 'at' HH:mm:ss")</div>
+            <div class="print-only">Page 1 of 1</div>
+        </div>
+
+        <!-- Print Controls - Hidden when printing -->
+        <div class="print-controls no-print">
+            <button onclick="window.print()" class="btn btn-primary">🖨️ Print Report</button>
+            <a href="/HR/Dashboard" class="btn btn-secondary">← Back to HR Dashboard</a>
+            <button onclick="exportToPDF()" class="btn" style="background: #27ae60; color: white;">📊 Export as PDF</button>
+        </div>
     </div>
 
-    <!-- Report Actions -->
-    <div class="mt-4">
-        <button class="btn btn-primary me-2" onclick="window.print()">
-            <i class="bi bi-printer"></i> Print Report
-        </button>
-        <a asp-action="Dashboard" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
-</div>
+    <script>
+        function exportToPDF() {
+            alert('PDF export functionality would be implemented here with a PDF library');
+        }
+    </script>
+</body>
+</html>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "approved" => "bg-success",
+            "verified" => "bg-info",
+            "pending verification" => "bg-warning",
+            "rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}

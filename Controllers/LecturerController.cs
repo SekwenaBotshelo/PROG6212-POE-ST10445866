@@ -28,8 +28,8 @@ namespace PROG6212_POE.Controllers
 
             ViewBag.CurrentUser = lecturer;
 
-            // Get only this lecturer's claims
-            var lecturerClaims = DataService.GetClaimsByLecturer(lecturer.UserId);
+            // FIXED: Use GetClaims() with Where instead of GetClaimsByLecturer
+            var lecturerClaims = DataService.GetClaims().Where(c => c.LecturerId == lecturer.UserId).ToList();
             return View(lecturerClaims);
         }
 
@@ -145,7 +145,8 @@ namespace PROG6212_POE.Controllers
             if (lecturer == null)
                 return RedirectToAction("Logout", "Account");
 
-            var lecturerClaims = DataService.GetClaimsByLecturer(lecturer.UserId);
+            // FIXED: Use GetClaims() with Where instead of GetClaimsByLecturer
+            var lecturerClaims = DataService.GetClaims().Where(c => c.LecturerId == lecturer.UserId).ToList();
             ViewBag.CurrentUser = lecturer;
             return View(lecturerClaims);
         }

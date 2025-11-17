@@ -146,24 +146,92 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "HR")
                 return RedirectToAction("AccessDenied", "Account");
 
-            var claims = DataService.GetClaims();
+            var currentUser = GetCurrentUser();
+            ViewBag.CurrentUser = currentUser;
 
-            // LINQ queries for reports
-            var approvedClaims = claims.Where(c => c.Status == "Approved").ToList();
-            var monthlyReport = approvedClaims
-                .GroupBy(c => c.Month)
-                .Select(g => new {
-                    Month = g.Key,
+            // Get all claims for comprehensive reporting
+            var allClaims = DataService.GetClaims();
+
+            // Calculate comprehensive statistics
+            ViewBag.TotalClaims = allClaims.Count;
+            ViewBag.TotalApprovedAmount = allClaims.Where(c => c.Status == "Approved").Sum(c => c.TotalAmount);
+            ViewBag.TotalApprovedClaims = allClaims.Count(c => c.Status == "Approved");
+            ViewBag.PendingClaims = allClaims.Count(c => c.Status == "Pending Verification" || c.Status == "Verified");
+
+            // Claims by Status data - FIXED: Using anonymous types with all required properties
+            var claimsByStatus = allClaims
+                .GroupBy(c => c.Status)
+                .Select(g => new
+                {
+                    Status = g.Key,
+                    Count = g.Count(),
                     TotalAmount = g.Sum(c => c.TotalAmount),
-                    ClaimCount = g.Count()
+                    AverageAmount = g.Count() > 0 ? g.Average(c => c.TotalAmount) : 0,
+                    Percentage = (double)g.Count() / allClaims.Count * 100
                 })
                 .ToList();
 
-            ViewBag.MonthlyReport = monthlyReport;
-            ViewBag.TotalApprovedAmount = approvedClaims.Sum(c => c.TotalAmount);
-            ViewBag.TotalApprovedClaims = approvedClaims.Count;
+            ViewBag.ClaimsByStatus = claimsByStatus;
 
-            return View(approvedClaims);
+            // Monthly Summary data - FIXED: Using anonymous types with all required properties
+            var monthlyGroups = allClaims
+                .GroupBy(c => c.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    ClaimCount = g.Count(),
+                    ApprovedCount = g.Count(c => c.Status == "Approved"),
+                    PendingCount = g.Count(c => c.Status == "Pending Verification" || c.Status == "Verified"),
+                    TotalAmount = g.Sum(c => c.TotalAmount),
+                    GrowthPercentage = 0.0 // Will calculate below
+                })
+                .OrderBy(m => m.Month)
+                .ToList();
+
+            // Calculate growth percentages
+            var monthlySummary = new List<object>();
+            for (int i = 0; i < monthlyGroups.Count; i++)
+            {
+                var currentMonth = monthlyGroups[i];
+                double growthPercentage = 0;
+
+                if (i > 0)
+                {
+                    var previousMonth = monthlyGroups[i - 1];
+                    var previousAmount = previousMonth.TotalAmount;
+                    var currentAmount = currentMonth.TotalAmount;
+
+                    if (previousAmount > 0)
+                    {
+                        growthPercentage = (currentAmount - previousAmount) / previousAmount * 100;
+                    }
+                }
+
+                monthlySummary.Add(new
+                {
+                    currentMonth.Month,
+                    currentMonth.ClaimCount,
+                    currentMonth.ApprovedCount,
+                    currentMonth.PendingCount,
+                    currentMonth.TotalAmount,
+                    GrowthPercentage = growthPercentage
+                });
+            }
+
+            ViewBag.MonthlySummary = monthlySummary;
+
+            // Calculate average processing days (simplified)
+            var approvedClaims = allClaims.Where(c => c.Status == "Approved" && c.ApprovedDate.HasValue);
+            if (approvedClaims.Any())
+            {
+                ViewBag.AverageProcessingDays = approvedClaims.Average(c => (c.ApprovedDate.Value - c.SubmittedDate).TotalDays);
+            }
+            else
+            {
+                ViewBag.AverageProcessingDays = 0;
+            }
+
+            return View(allClaims); // Return all claims for the detailed register
         }
 
         // GET: /HR/ViewAllClaims

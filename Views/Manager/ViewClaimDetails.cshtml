@@ -18,10 +18,10 @@
                 <div class="col-md-6">
                     <h5>Claim Information</h5>
                     <p><strong>Claim ID:</strong> @Model.ClaimId</p>
-                    <p><strong>Lecturer:</strong> @Model.Lecturer.FullName</p>
-                    <p><strong>Email:</strong> @Model.Lecturer.Email</p>
-                    <p><strong>Hourly Rate:</strong> R @Model.Lecturer.HourlyRate</p>
-                    <p><strong>Verified By:</strong> @Model.VerifiedByCoordinator?.FullName</p>
+                    <p><strong>Lecturer:</strong> @Model.SafeLecturerName</p>
+                    <p><strong>Email:</strong> @Model.SafeLecturerEmail</p>
+                    <p><strong>Hourly Rate:</strong> R @Model.StoredHourlyRate.ToString("F2")</p>
+                    <p><strong>Verified By:</strong> @(Model.VerifiedByCoordinator?.FullName ?? "Not Verified")</p>
                     <p><strong>Verified Date:</strong> @Model.VerifiedDate?.ToString("yyyy-MM-dd")</p>
                 </div>
                 <div class="col-md-6">
