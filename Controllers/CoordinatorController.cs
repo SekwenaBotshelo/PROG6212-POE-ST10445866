@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
 using PROG6212_POE.Services;
-using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
@@ -64,6 +63,10 @@ namespace PROG6212_POE.Controllers
             if (HttpContext.Session.GetString("UserRole") != "Coordinator")
                 return RedirectToAction("AccessDenied", "Account");
 
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
             var claims = DataService.GetClaims();
             var claim = claims.FirstOrDefault(c => c.ClaimId == id);
 
@@ -74,8 +77,10 @@ namespace PROG6212_POE.Controllers
             }
 
             ViewBag.ClaimId = id;
-            ViewBag.CurrentUser = GetCurrentCoordinator();
-            return View(claim);
+            ViewBag.CurrentUser = coordinator;
+
+            // EXPLICITLY SPECIFY THE VIEW NAME TO AVOID ISSUES
+            return View("ViewClaimDetails", claim);
         }
 
         // POST: /Coordinator/VerifyClaim
@@ -90,24 +95,32 @@ namespace PROG6212_POE.Controllers
             if (coordinator == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claims = DataService.GetClaims();
-            var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
-
-            if (claim != null)
+            try
             {
-                claim.Status = "Verified";
-                claim.VerifiedByCoordinatorId = coordinator.UserId;
-                claim.VerifiedDate = DateTime.Now;
+                var claims = DataService.GetClaims();
+                var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
 
-                DataService.UpdateClaim(claim);
-                TempData["SuccessMessage"] = "Claim verified successfully!";
+                if (claim != null)
+                {
+                    claim.Status = "Verified";
+                    claim.VerifiedByCoordinatorId = coordinator.UserId;
+                    claim.VerifiedDate = DateTime.Now;
+
+                    DataService.UpdateClaim(claim);
+                    TempData["SuccessMessage"] = $"Claim #{claimId} verified successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Claim not found.";
+                }
+
+                return RedirectToAction("Dashboard");
             }
-            else
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Claim not found.";
+                TempData["ErrorMessage"] = $"An error occurred while verifying the claim: {ex.Message}";
+                return RedirectToAction("Dashboard");
             }
-
-            return RedirectToAction("Dashboard");
         }
 
         // POST: /Coordinator/RejectClaim
@@ -122,24 +135,49 @@ namespace PROG6212_POE.Controllers
             if (coordinator == null)
                 return RedirectToAction("Logout", "Account");
 
+            try
+            {
+                var claims = DataService.GetClaims();
+                var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
+
+                if (claim != null)
+                {
+                    claim.Status = "Rejected";
+                    claim.VerifiedByCoordinatorId = coordinator.UserId;
+                    claim.VerifiedDate = DateTime.Now;
+
+                    DataService.UpdateClaim(claim);
+                    TempData["SuccessMessage"] = $"Claim #{claimId} rejected successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Claim not found.";
+                }
+
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while rejecting the claim: {ex.Message}";
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        // GET: /Coordinator/ViewVerifiedClaims
+        public IActionResult ViewVerifiedClaims()
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Coordinator")
+                return RedirectToAction("AccessDenied", "Account");
+
+            var coordinator = GetCurrentCoordinator();
+            if (coordinator == null)
+                return RedirectToAction("Logout", "Account");
+
             var claims = DataService.GetClaims();
-            var claim = claims.FirstOrDefault(c => c.ClaimId == claimId);
+            var verifiedClaims = claims.Where(c => c.Status == "Verified" && c.VerifiedByCoordinatorId == coordinator.UserId).ToList();
 
-            if (claim != null)
-            {
-                claim.Status = "Rejected";
-                claim.VerifiedByCoordinatorId = coordinator.UserId;
-                claim.VerifiedDate = DateTime.Now;
-
-                DataService.UpdateClaim(claim);
-                TempData["SuccessMessage"] = "Claim rejected successfully!";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Claim not found.";
-            }
-
-            return RedirectToAction("Dashboard");
+            ViewBag.CurrentUser = coordinator;
+            return View(verifiedClaims);
         }
     }
 }
