@@ -18,14 +18,17 @@
         </div>
     }
 
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
     <!-- Error Message -->
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
-
-    <!-- Validation Summary -->
-    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
         @Html.AntiForgeryToken()
@@ -64,14 +67,16 @@
             <label asp-for="Notes" class="form-label">Additional Notes <small class="text-muted">(Optional)</small></label>
             <textarea asp-for="Notes" class="form-control" rows="3"
                       placeholder="Optional: Add any additional information about this claim"></textarea>
-            <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
 
+        <!-- SUPPORTING DOCUMENT SECTION (OPTIONAL) -->
         <div class="form-group mb-3">
-            <label for="supportingDocument" class="form-label">Supporting Document</label>
+            <label for="supportingDocument" class="form-label">Supporting Document <small class="text-muted">(Optional)</small></label>
             <input type="file" class="form-control" id="supportingDocument"
                    name="supportingDocument" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
-            <small class="form-text text-muted">Optional: Upload PDF, Word, or image files</small>
+            <small class="form-text text-muted">
+                Optional: Upload PDF, Word documents, or images (JPG, PNG) to support your claim
+            </small>
         </div>
 
         <button type="submit" class="btn btn-success w-100 mt-3">

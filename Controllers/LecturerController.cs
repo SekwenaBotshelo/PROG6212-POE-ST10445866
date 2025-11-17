@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PROG6212_POE.Models;
 using PROG6212_POE.Services;
-using System.Diagnostics;
 
 namespace PROG6212_POE.Controllers
 {
@@ -44,20 +43,14 @@ namespace PROG6212_POE.Controllers
             if (lecturer == null)
                 return RedirectToAction("Logout", "Account");
 
-            var claim = new Claim
-            {
-                LecturerId = lecturer.UserId,
-                Lecturer = lecturer
-            };
-
             ViewBag.CurrentUser = lecturer;
-            return View(claim);
+            return View(new Claim { LecturerId = lecturer.UserId });
         }
 
-        // POST: /Lecturer/SubmitClaim - SIMPLIFIED WORKING VERSION
+        // POST: /Lecturer/SubmitClaim - CLEAN VERSION
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SubmitClaim(Claim claim, IFormFile supportingDocument)
+        public IActionResult SubmitClaim(Claim model, IFormFile supportingDocument)
         {
             if (HttpContext.Session.GetString("UserRole") != "Lecturer")
                 return RedirectToAction("AccessDenied", "Account");
@@ -66,70 +59,74 @@ namespace PROG6212_POE.Controllers
             if (lecturer == null)
                 return RedirectToAction("Logout", "Account");
 
-            // Auto-populate from logged-in lecturer
-            claim.LecturerId = lecturer.UserId;
-            claim.Lecturer = lecturer;
-            claim.SubmittedDate = DateTime.Now;
-            claim.Status = "Pending Verification";
+            ViewBag.CurrentUser = lecturer;
 
-            // CRITICAL: Clear Notes validation if empty and ensure it's not null
-            if (string.IsNullOrEmpty(claim.Notes))
+            try
             {
-                ModelState.Remove("Notes");
-                claim.Notes = string.Empty;
-            }
-
-            // Manual validation for hours
-            if (claim.TotalHours <= 0 || claim.TotalHours > 180)
-            {
-                ModelState.AddModelError("TotalHours", "Hours must be between 1 and 180.");
-            }
-
-            // Manual validation for month
-            if (string.IsNullOrEmpty(claim.Month))
-            {
-                ModelState.AddModelError("Month", "Month is required.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                // Manual validation
+                if (string.IsNullOrEmpty(model.Month))
                 {
-                    // Handle file upload
-                    if (supportingDocument != null && supportingDocument.Length > 0)
+                    TempData["ErrorMessage"] = "Month is required.";
+                    return View(model);
+                }
+
+                if (model.TotalHours <= 0 || model.TotalHours > 180)
+                {
+                    TempData["ErrorMessage"] = "Hours must be between 1 and 180.";
+                    return View(model);
+                }
+
+                // Create new claim
+                var newClaim = new Claim
+                {
+                    LecturerId = lecturer.UserId,
+                    Month = model.Month,
+                    TotalHours = model.TotalHours,
+                    Notes = model.Notes ?? string.Empty,
+                    SubmittedDate = DateTime.Now,
+                    Status = "Pending Verification"
+                };
+
+                // Handle file upload if provided
+                if (supportingDocument != null && supportingDocument.Length > 0)
+                {
+                    var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx" };
+                    var extension = Path.GetExtension(supportingDocument.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
                     {
-                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                        if (!Directory.Exists(uploadsFolder))
-                            Directory.CreateDirectory(uploadsFolder);
-
-                        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_{supportingDocument.FileName}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            supportingDocument.CopyTo(stream);
-                        }
-
-                        claim.DocumentPath = fileName;
-                        claim.DocumentOriginalName = supportingDocument.FileName;
+                        TempData["ErrorMessage"] = "Invalid file type. Only PDF, Word, and image files are allowed.";
+                        return View(model);
                     }
 
-                    // Add the claim to storage
-                    DataService.AddClaim(claim);
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
 
-                    TempData["SuccessMessage"] = $"Claim #{claim.ClaimId} submitted successfully! It is now pending verification.";
-                    return RedirectToAction("Dashboard");
+                    var fileName = $"claim_{DateTime.Now:yyyyMMddHHmmss}_{supportingDocument.FileName}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        supportingDocument.CopyTo(stream);
+                    }
+
+                    // Save file info to claim
+                    newClaim.DocumentPath = fileName;
+                    newClaim.DocumentOriginalName = supportingDocument.FileName;
                 }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
-                }
+
+                // Add the claim to storage
+                DataService.AddClaim(newClaim);
+
+                TempData["SuccessMessage"] = $"Claim #{newClaim.ClaimId} submitted successfully! It is now pending verification.";
+                return RedirectToAction("Dashboard");
             }
-
-            // If we get here, there were validation errors
-            claim.Lecturer = lecturer;
-            ViewBag.CurrentUser = lecturer;
-            return View(claim);
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                return View(model);
+            }
         }
 
         // GET: /Lecturer/TrackClaims

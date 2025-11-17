@@ -15,6 +15,17 @@
         </div>
     }
 
+    <!-- Debug Info -->
+    <div class="alert alert-warning">
+        <strong>Debug Info:</strong><br>
+        Lecturer ID: @ViewBag.CurrentUser?.UserId<br>
+        Claims Count: @(Model?.Count() ?? 0)<br>
+        @if (Model != null && Model.Any())
+        {
+            <text>Claim IDs: @string.Join(", ", Model.Select(c => c.ClaimId))</text>
+        }
+    </div>
+
     <!-- Buttons -->
     <div class="d-flex justify-content-center mb-4">
         <a asp-action="SubmitClaim" class="btn btn-success me-2">
@@ -60,7 +71,8 @@
                                     <td>@claim.ClaimId</td>
                                     <td>@claim.Month</td>
                                     <td>@claim.TotalHours</td>
-                                    <td>R @claim.Lecturer.HourlyRate</td>
+                                    <!-- FIXED: Use ViewBag.CurrentUser instead of claim.Lecturer -->
+                                    <td>R @(ViewBag.CurrentUser?.HourlyRate ?? 0)</td>
                                     <td>R @claim.TotalAmount.ToString("F2")</td>
                                     <td>
                                         <span class="badge @GetStatusBadgeClass(claim.Status)">
