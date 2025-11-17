@@ -18,9 +18,9 @@
                 <div class="col-md-6">
                     <h5>Claim Information</h5>
                     <p><strong>Claim ID:</strong> @Model.ClaimId</p>
-                    <p><strong>Lecturer:</strong> @Model.Lecturer.FullName</p>
-                    <p><strong>Email:</strong> @Model.Lecturer.Email</p>
-                    <p><strong>Hourly Rate:</strong> R @Model.Lecturer.HourlyRate</p>
+                    <p><strong>Lecturer:</strong> @Model.SafeLecturerName</p> <!-- FIXED -->
+                    <p><strong>Email:</strong> @Model.SafeLecturerEmail</p> <!-- FIXED -->
+                    <p><strong>Hourly Rate:</strong> R @Model.StoredHourlyRate.ToString("F2")</p> <!-- FIXED -->
                 </div>
                 <div class="col-md-6">
                     <h5>Claim Details</h5>

@@ -1,0 +1,92 @@
+﻿@model PROG6212_POE.Models.Claim
+@{
+    ViewData["Title"] = "Upload Document for Claim";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-upload"></i> Upload Supporting Document
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Claim Information -->
+                    <div class="alert alert-info">
+                        <h5>Claim Information</h5>
+                        <p class="mb-1"><strong>Claim ID:</strong> #@Model.ClaimId</p>
+                        <p class="mb-1"><strong>Month:</strong> @Model.Month</p>
+                        <p class="mb-1"><strong>Hours Worked:</strong> @Model.TotalHours</p>
+                        <p class="mb-0"><strong>Total Amount:</strong> R @Model.TotalAmount.ToString("F2")</p>
+                    </div>
+
+                    <!-- Success Message -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <!-- Error Message -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-circle"></i> @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <!-- Upload Form -->
+                    <form asp-action="UploadDocumentForClaim" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="claimId" value="@Model.ClaimId" />
+
+                        <div class="mb-3">
+                            <label for="supportingDocument" class="form-label fw-bold">Supporting Document *</label>
+                            <input type="file" class="form-control" id="supportingDocument"
+                                   name="supportingDocument" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Allowed file types: PDF, Word documents (.doc, .docx), Images (.jpg, .jpeg, .png). Maximum file size: 10MB.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="documentDescription" class="form-label fw-bold">Document Description (Optional)</label>
+                            <textarea class="form-control" id="documentDescription" name="documentDescription"
+                                      rows="3" placeholder="Briefly describe what this document shows..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="TrackClaims" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Back to Claims
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> Upload Document
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Current Document Status -->
+                    @if (!string.IsNullOrEmpty(Model.DocumentPath))
+                    {
+                        <div class="mt-4 pt-3 border-top">
+                            <h6>Current Document</h6>
+                            <div class="alert alert-warning">
+                                <p class="mb-1"><strong>File:</strong> @Model.DocumentOriginalName</p>
+                                <p class="mb-0">
+                                    <a href="/uploads/@Model.DocumentPath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View Current Document
+                                    </a>
+                                </p>
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-exclamation-triangle"></i> Uploading a new document will replace the existing one.
+                            </small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

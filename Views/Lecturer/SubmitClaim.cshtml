@@ -67,6 +67,7 @@
             <label asp-for="Notes" class="form-label">Additional Notes <small class="text-muted">(Optional)</small></label>
             <textarea asp-for="Notes" class="form-control" rows="3"
                       placeholder="Optional: Add any additional information about this claim"></textarea>
+            <!-- Remove validation span for Notes -->
         </div>
 
         <!-- SUPPORTING DOCUMENT SECTION (OPTIONAL) -->
@@ -117,6 +118,20 @@
             if ($('#hoursWorked').val()) {
                 $('#hoursWorked').trigger('input');
             }
+
+            // Disable validation for Notes field
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+
+            // Remove any validation rules from Notes
+            $('[data-val-length]').each(function() {
+                if ($(this).attr('name') === 'Notes') {
+                    $(this).removeAttr('data-val-length');
+                    $(this).removeAttr('data-val-length-max');
+                    $(this).removeAttr('data-val');
+                }
+            });
         });
     </script>
 }
