@@ -15,16 +15,11 @@
         </div>
     }
 
-    <!-- Debug Info -->
-    <div class="alert alert-warning">
-        <strong>Debug Info:</strong><br>
-        Lecturer ID: @ViewBag.CurrentUser?.UserId<br>
-        Claims Count: @(Model?.Count() ?? 0)<br>
-        @if (Model != null && Model.Any())
-        {
-            <text>Claim IDs: @string.Join(", ", Model.Select(c => c.ClaimId))</text>
-        }
-    </div>
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+    }
 
     <!-- Buttons -->
     <div class="d-flex justify-content-center mb-4">
@@ -38,12 +33,6 @@
             <i class="bi bi-card-list"></i> View Submitted Claims
         </a>
     </div>
-
-    <!-- Success Message -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
-    }
 
     <!-- Claims Table -->
     <div class="card shadow-sm mb-4">
@@ -59,6 +48,7 @@
                             <th>Hourly Rate</th>
                             <th>Total Amount</th>
                             <th>Status</th>
+                            <th>Document</th>
                             <th>Submitted Date</th>
                         </tr>
                     </thead>
@@ -71,13 +61,26 @@
                                     <td>@claim.ClaimId</td>
                                     <td>@claim.Month</td>
                                     <td>@claim.TotalHours</td>
-                                    <!-- FIXED: Use ViewBag.CurrentUser instead of claim.Lecturer -->
-                                    <td>R @(ViewBag.CurrentUser?.HourlyRate ?? 0)</td>
+                                    <td>R @claim.StoredHourlyRate.ToString("F2")</td>
                                     <td>R @claim.TotalAmount.ToString("F2")</td>
                                     <td>
                                         <span class="badge @GetStatusBadgeClass(claim.Status)">
                                             @claim.Status
                                         </span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                        {
+                                            <a href="/uploads/@claim.DocumentPath" target="_blank" class="btn btn-success btn-sm">
+                                                <i class="bi bi-file-earmark"></i> View Document
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="UploadDocumentForClaim" asp-route-claimId="@claim.ClaimId" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-upload"></i> Upload
+                                            </a>
+                                        }
                                     </td>
                                     <td>@claim.SubmittedDate.ToString("yyyy-MM-dd")</td>
                                 </tr>
@@ -86,7 +89,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="7" class="text-center text-muted">No claims submitted yet.</td>
+                                <td colspan="8" class="text-center text-muted">No claims submitted yet.</td>
                             </tr>
                         }
                     </tbody>

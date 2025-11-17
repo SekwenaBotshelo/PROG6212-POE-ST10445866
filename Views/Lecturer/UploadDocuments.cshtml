@@ -1,39 +1,119 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@{
-    ViewData["Title"] = "Upload Supporting Document";
+﻿@{
+    ViewData["Title"] = "Upload Supporting Documents";
+    var claimId = Context.Request.Query["claimId"].ToString();
+    var hasClaimId = !string.IsNullOrEmpty(claimId);
 }
 
 <div class="container mt-4">
-    <h2>Upload Supporting Document</h2>
-
-    <div class="card">
-        <div class="card-body">
-            <form asp-action="UploadDocuments" method="post" enctype="multipart/form-data">
-                @Html.AntiForgeryToken()
-
-                <div class="form-group mb-3">
-                    <label for="supportingFile" class="form-label">Select File (PDF, JPG, JPEG, PNG, DOC, DOCX)</label>
-                    <input type="file" id="supportingFile" name="supportingFile" class="form-control"
-                           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
-                    <small class="form-text text-muted">Maximum file size: 10MB</small>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-upload"></i>
+                        @if (hasClaimId)
+                        {
+                            <text>Upload Document for Claim #@claimId</text>
+                        }
+                        else
+                        {
+                            <text>Upload Supporting Documents</text>
+                        }
+                    </h4>
                 </div>
+                <div class="card-body">
+                    @if (hasClaimId)
+                    {
+                        <!-- Claim-specific upload -->
+                        <div class="alert alert-info">
+                            <h5>Claim Information</h5>
+                            <p class="mb-1">You are uploading a document for a specific claim.</p>
+                            <p class="mb-0"><strong>Claim ID:</strong> #@claimId</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- General upload -->
+                        <div class="alert alert-info">
+                            <h5>General Document Upload</h5>
+                            <p class="mb-0">Upload supporting documents that are not linked to a specific claim.</p>
+                        </div>
+                    }
 
-                <button type="submit" class="btn btn-primary">Upload Document</button>
-                <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
-            </form>
+                    <!-- Success Message -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <!-- Error Message -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-circle"></i> @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <!-- Upload Form -->
+                    <form asp-action="UploadDocuments" method="post" enctype="multipart/form-data">
+                        @if (hasClaimId)
+                        {
+                            <input type="hidden" name="claimId" value="@claimId" />
+                        }
+
+                        <div class="mb-3">
+                            <label for="supportingFile" class="form-label fw-bold">
+                                Supporting Document *
+                            </label>
+                            <input type="file" class="form-control" id="supportingFile"
+                                   name="supportingFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Allowed file types: PDF, Word documents (.doc, .docx), Images (.jpg, .jpeg, .png). Maximum file size: 10MB.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="documentDescription" class="form-label fw-bold">
+                                Document Description @(hasClaimId ? "(Optional)" : "*")
+                            </label>
+                            <textarea class="form-control" id="documentDescription" name="documentDescription"
+                                      rows="3" placeholder="Briefly describe what this document shows..."
+                                      @(hasClaimId ? "" : "required")></textarea>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i>
+                                @if (hasClaimId)
+                                {
+                                    <text>This helps coordinators and managers understand the purpose of your document.</text>
+                                }
+                                else
+                                {
+                                    <text>Description is required for general documents to identify their purpose.</text>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            @if (hasClaimId)
+                            {
+                                <a asp-action="TrackClaims" class="btn btn-secondary me-md-2">
+                                    <i class="bi bi-arrow-left"></i> Back to Claims
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Dashboard" class="btn btn-secondary me-md-2">
+                                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                                </a>
+                            }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> Upload Document
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
-    }
 </div>

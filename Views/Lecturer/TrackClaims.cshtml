@@ -1,6 +1,6 @@
 ﻿@model List<PROG6212_POE.Models.Claim>
 @{
-    ViewData["Title"] = "Track Claims";
+    ViewData["Title"] = "Track Your Claims";
 }
 
 <div class="container mt-4">
@@ -31,6 +31,7 @@
                             <th>Hourly Rate</th>
                             <th>Total Amount</th>
                             <th>Status</th>
+                            <th>Document</th>
                             <th>Submitted Date</th>
                             <th>Last Updated</th>
                         </tr>
@@ -44,12 +45,27 @@
                                     <td>@claim.ClaimId</td>
                                     <td>@claim.Month</td>
                                     <td>@claim.TotalHours</td>
-                                    <td>R @claim.Lecturer.HourlyRate</td>
+                                    <td>R @claim.StoredHourlyRate.ToString("F2")</td>
                                     <td>R @claim.TotalAmount.ToString("F2")</td>
                                     <td>
                                         <span class="badge @GetStatusBadgeClass(claim.Status)">
                                             @claim.Status
                                         </span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                        {
+                                            <a href="/uploads/@claim.DocumentPath" target="_blank" class="btn btn-success btn-sm">
+                                                <i class="bi bi-file-earmark"></i> View
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <!-- IMPORTANT: This should be UploadDocuments NOT UploadDocumentForClaim -->
+                                            <a asp-action="UploadDocuments" asp-route-claimId="@claim.ClaimId" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-upload"></i> Upload
+                                            </a>
+                                        }
                                     </td>
                                     <td>@claim.SubmittedDate.ToString("yyyy-MM-dd")</td>
                                     <td>
@@ -64,7 +80,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="8" class="text-center text-muted">No claims found.</td>
+                                <td colspan="9" class="text-center text-muted">No claims found.</td>
                             </tr>
                         }
                     </tbody>

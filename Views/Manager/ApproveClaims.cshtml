@@ -23,6 +23,7 @@
                             <th>Lecturer</th>
                             <th>Month</th>
                             <th>Hours</th>
+                            <th>Hourly Rate</th>
                             <th>Amount</th>
                             <th>Status</th>
                             <th>Verified By</th>
@@ -36,12 +37,13 @@
                             {
                                 <tr>
                                     <td>@claim.ClaimId</td>
-                                    <td>@claim.Lecturer.FullName</td>
+                                    <td>@claim.LecturerName</td>
                                     <td>@claim.Month</td>
                                     <td>@claim.TotalHours</td>
+                                    <td>R @claim.StoredHourlyRate.ToString("F2")</td>
                                     <td>R @claim.TotalAmount.ToString("F2")</td>
                                     <td><span class="badge bg-info">@claim.Status</span></td>
-                                    <td>@claim.VerifiedByCoordinator?.FullName</td>
+                                    <td>@(claim.VerifiedByCoordinator?.FullName ?? "Not Verified")</td>
                                     <td>
                                         <a href="/Manager/ViewClaimDetails/@claim.ClaimId" class="btn btn-info btn-sm">View Details</a>
                                     </td>
@@ -51,7 +53,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="8" class="text-center text-muted">No claims pending approval.</td>
+                                <td colspan="9" class="text-center text-muted">No claims pending approval.</td>
                             </tr>
                         }
                     </tbody>
